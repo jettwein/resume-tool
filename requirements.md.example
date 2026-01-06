@@ -1,4 +1,4 @@
-# Project Requirements: {{ cookiecutter.project_name }}
+# Project Requirements: [Your Project Name]
 
 > Copy this file to `requirements.md` and customize for your project.
 > Then run `/init-project` to generate a plan and create Jira tickets.

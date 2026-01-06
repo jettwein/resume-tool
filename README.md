@@ -1,93 +1,69 @@
-# Claude Code Full-Stack Template
+# Claude Code Starter
 
-A [Cookiecutter](https://cookiecutter.readthedocs.io/) template for creating full-stack projects optimized for [Claude Code](https://claude.ai/code) agentic workflows.
+A minimal starter repo for [Claude Code](https://claude.ai/code) projects with GitHub and Jira integration.
 
-## Features
-
-- **Full-stack scaffolding**: React + Vite frontend with choice of Node.js or Python/Flask backend
-- **Claude Code optimized**: Comprehensive `CLAUDE.md` with commands, workflows, and conventions
-- **Jira integration**: Optional MCP server configuration for Jira issue tracking
-- **GitHub Actions CI**: Automated testing and linting on pull requests
-- **Custom slash commands**: `/jira-task`, `/new-feature`, `/review` workflows
-- **Multi-agent patterns**: Git worktree setup for parallel development
-
-## Usage
-
-### Prerequisites
-
-- Python 3.8+ (for cookiecutter)
-- Node.js 20+
-- Python 3.11+ (if using Python backend)
-
-### Generate a New Project
-
-```bash
-# Install cookiecutter if you haven't already
-pip install cookiecutter
-
-# Generate a project from this template
-cookiecutter /path/to/agentic-coding-poc
-
-# Or directly from GitHub (once published)
-# cookiecutter gh:your-username/agentic-coding-poc
-```
-
-### Template Options
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `project_name` | Display name for the project | My Fullstack App |
-| `backend_choice` | Backend stack (node/python) | node |
-| `use_docker` | Include Docker Compose setup | yes |
-| `enable_jira_integration` | Configure Atlassian MCP server | yes |
-| `jira_project_key` | Jira project key (e.g., PROJ) | |
-| `include_sample_app` | Include sample todo app | yes |
-
-## Generated Project Structure
+## What's Included
 
 ```
-my-project/
-├── CLAUDE.md                # Single source of truth for Claude Code
-├── README.md
-├── Makefile                 # Unified commands
-├── .claude/
-│   ├── settings.json       # MCP servers and permissions
-│   └── commands/           # Custom slash commands
-│       ├── jira-task.md
-│       ├── new-feature.md
-│       └── review.md
-├── frontend/               # React + Vite + TypeScript
-├── backend-node/           # Node.js + Express (if selected)
-├── backend-python/         # Python + Flask (if selected)
-└── .github/workflows/      # CI pipeline
+├── CLAUDE.md                    # Claude Code instructions
+├── requirements.md.example      # Template for project requirements
+└── .claude/
+    ├── settings.json           # Jira MCP server config
+    └── commands/
+        ├── init-project.md     # Requirements → Jira stories
+        ├── jira-task.md        # Implement from Jira ticket
+        ├── new-feature.md      # Feature implementation workflow
+        └── review.md           # Pre-PR code review
 ```
 
-## Workflow Overview
+## Quick Start
 
-1. **Start from Jira**: Use `/jira-task PROJ-123` to fetch requirements
-2. **Create branch**: Follow `feature/<jira-key>-<description>` convention
-3. **Implement**: Use `/new-feature` for explore-plan-code-commit workflow
-4. **Review**: Run `/review` to check code before PR
-5. **Submit PR**: Create PR for human review via `gh pr create`
-6. **Iterate**: Address feedback, rerun tests
-7. **Merge**: Human merges approved PR to main
+1. **Clone this repo** (or use as template)
+   ```bash
+   git clone <this-repo> my-project
+   cd my-project
+   ```
 
-## Development
+2. **Create a Jira project** in your Atlassian instance
 
-To modify this template:
+3. **Add your requirements**
+   ```bash
+   cp requirements.md.example requirements.md
+   # Edit requirements.md with your project details
+   ```
 
-```bash
-# Clone the repository
-git clone https://github.com/your-username/agentic-coding-poc
-cd agentic-coding-poc
+4. **Start Claude Code**
+   ```bash
+   claude
+   ```
 
-# Test generation locally
-cookiecutter . --no-input project_name="Test Project"
+5. **Generate Jira stories from requirements**
+   ```
+   /init-project YOUR-PROJECT-KEY
+   ```
 
-# Check the generated output
-cd test-project
+6. **Start implementing**
+   ```
+   /jira-task YOUR-PROJECT-KEY-1
+   ```
+
+## Jira Authentication
+
+On first use of any Jira command, Claude will prompt you to authenticate via OAuth in your browser. This is a one-time setup per session.
+
+## Custom Commands
+
+| Command | Description |
+|---------|-------------|
+| `/init-project PROJ [file]` | Read requirements and create Jira epics/stories |
+| `/jira-task PROJ-123` | Fetch issue and plan implementation |
+| `/new-feature <desc>` | Implement with explore-plan-code-commit workflow |
+| `/review` | Review changes before PR |
+
+## Workflow
+
+```
+requirements.md → /init-project → Jira tickets → /jira-task → Implementation → /review → PR
 ```
 
-## License
-
-MIT
+See `CLAUDE.md` for detailed workflow documentation.
