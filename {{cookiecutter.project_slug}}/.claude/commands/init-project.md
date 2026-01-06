@@ -4,11 +4,20 @@ Read a requirements document and create a project plan with Jira user stories.
 
 ## Arguments
 
-$ARGUMENTS - Path to requirements file (defaults to `requirements.md` in project root)
+$ARGUMENTS - `<project-key> [requirements-file]`
+
+- **project-key** (required): Jira project key (e.g., `PROJ`, `MYAPP`)
+- **requirements-file** (optional): Path to requirements file (defaults to `requirements.md`)
+
+### Examples
+```
+/init-project PROJ                      # Uses PROJ project, reads requirements.md
+/init-project MYAPP docs/prd.md         # Uses MYAPP project, reads docs/prd.md
+```
 
 ## Prerequisites
 
-- Jira project must already exist (project key configured in CLAUDE.md)
+- Jira project must already exist in your Atlassian instance
 - Atlassian MCP server authenticated (OAuth will prompt on first use)
 
 ## Instructions
@@ -83,25 +92,25 @@ Once approved, use the Atlassian MCP server to bulk create tickets:
 
 1. Create Epic tickets first (issue type: Epic)
 2. Create Story tickets linked to their parent Epic
-3. Add labels: `generated-from-requirements`, `{{ cookiecutter.project_slug }}`
+3. Add labels: `generated-from-requirements`
 4. Set initial status to Backlog
 
 ### Step 6: Output Summary
 
-Provide a summary of created tickets:
+Provide a summary of created tickets (using the project key from arguments):
 
 ```
 ## Created Jira Tickets
 
 ### Epics
-- {{ cookiecutter.jira_project_key }}-1: [Epic title]
-- {{ cookiecutter.jira_project_key }}-2: [Epic title]
+- [PROJECT]-1: [Epic title]
+- [PROJECT]-2: [Epic title]
 
 ### Stories
 | Key | Title | Epic | Complexity |
 |-----|-------|------|------------|
-| {{ cookiecutter.jira_project_key }}-3 | [Title] | Epic 1 | M |
-| {{ cookiecutter.jira_project_key }}-4 | [Title] | Epic 1 | S |
+| [PROJECT]-3 | [Title] | Epic 1 | M |
+| [PROJECT]-4 | [Title] | Epic 1 | S |
 ...
 
 Total: [N] tickets created
@@ -109,11 +118,12 @@ Total: [N] tickets created
 Next steps:
 1. Review and prioritize tickets in Jira
 2. Assign to sprint
-3. Use `/jira-task {{ cookiecutter.jira_project_key }}-X` to start implementation
+3. Use `/jira-task [PROJECT]-X` to start implementation
 ```
 
 ## Error Handling
 
+- If project key not provided: Ask user for the Jira project key
 - If requirements file not found: Prompt user for correct path
 - If Jira auth fails: Guide user through OAuth flow
 - If ticket creation fails: Log which tickets succeeded, retry failed ones
