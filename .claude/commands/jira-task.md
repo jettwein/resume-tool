@@ -4,7 +4,7 @@ Read a Jira issue and prepare for implementation.
 
 ## Arguments
 
-$ARGUMENTS - The Jira issue key (e.g., PROJ-123)
+$ARGUMENTS - The Jira issue key (e.g., ACME-123)
 
 ## Instructions
 

@@ -63,8 +63,9 @@ The Atlassian MCP server is configured in `.claude/settings.json`. On first use:
 
 | Command | Description |
 |---------|-------------|
-| `/init-project PROJ [file]` | Read requirements and create Jira epics/stories |
-| `/jira-task PROJ-123` | Fetch issue and plan implementation |
+| `/init-project JIRA-PROJ-ID [file]` | Read requirements and create Jira epics/stories |
+| `/implement-all JIRA-PROJ-ID [--wait\|--batch]` | Auto-implement all stories in dependency order |
+| `/jira-task JIRA-PROJ-ID-123` | Fetch issue and plan implementation |
 | `/new-feature <desc>` | Implement with explore-plan-code-commit workflow |
 | `/review` | Review changes before PR |
 
@@ -72,18 +73,33 @@ The Atlassian MCP server is configured in `.claude/settings.json`. On first use:
 
 ## Workflow: Requirements → Jira → Implementation
 
+### Phase 1: Define Stories
 1. **Add requirements**: Copy `requirements.md.example` to `requirements.md`
 2. **Create Jira project**: Manually create in Atlassian (one-time)
-3. **Generate stories**: `/init-project PROJ`
-4. **Parallelize if possible**: Identify independent stories for concurrent work
-5. **Implement**: `/jira-task PROJ-X` for each story
-6. **Review**: `/review` before PR
-7. **Submit PR**: `gh pr create` for human review
-8. **Human merges**: After approval, human merges to main
+3. **Generate stories**: `/init-project JIRA-PROJ-ID` - Claude reads requirements and writes stories to `stories.md`
+4. **Review stories**: Review `stories.md` - each story has GIVEN/WHEN/THEN acceptance criteria
+5. **Iterate** (optional): Edit `stories.md` directly, or ask Claude to make changes conversationally
+6. **Approve**: Say "approved" to create Jira tickets (Claude will NOT create tickets without approval)
+
+### Phase 2: Implement
+7. **Implement all stories**: `/implement-all JIRA-PROJ-ID` - Claude analyzes dependencies and works through stories
+   - `--wait` (default): Waits for PR approval before next story
+   - `--batch`: Creates all PRs without waiting
+   - Or use `/jira-task JIRA-PROJ-ID-X` for individual stories
+8. **Human reviews and merges**: Review PRs in GitHub, merge when approved
 
 ---
 
 ## Git Workflow
+
+### Starting New Work
+**ALWAYS create a feature branch from main before starting any new work:**
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/<jira-key>-<description>
+```
+Never commit directly to main. All work must happen on a feature branch.
 
 ### Branch Naming
 - Features: `feature/<jira-key>-<description>`

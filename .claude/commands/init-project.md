@@ -6,13 +6,13 @@ Read a requirements document and create a project plan with Jira user stories.
 
 $ARGUMENTS - `<project-key> [requirements-file]`
 
-- **project-key** (required): Jira project key (e.g., `PROJ`, `MYAPP`)
+- **project-key** (required): Jira project key (e.g., `ACME`, `TODOAPP`)
 - **requirements-file** (optional): Path to requirements file (defaults to `requirements.md`)
 
 ### Examples
 ```
-/init-project PROJ                      # Uses PROJ project, reads requirements.md
-/init-project MYAPP docs/prd.md         # Uses MYAPP project, reads docs/prd.md
+/init-project ACME                      # Uses ACME project, reads requirements.md
+/init-project TODOAPP docs/prd.md       # Uses TODOAPP project, reads docs/prd.md
 ```
 
 ## Prerequisites
@@ -22,16 +22,20 @@ $ARGUMENTS - `<project-key> [requirements-file]`
 
 ## Instructions
 
-### Step 1: Read Requirements Document
+### Phase 1: Plan Mode - Define What to Build
+
+**Enter plan mode** to collaboratively define the project scope.
+
+#### Step 1.1: Read Requirements Document
 
 Read the requirements file specified (or `requirements.md` by default). Extract:
 - Project overview/goals
 - Functional requirements
 - Non-functional requirements
 - User personas (if specified)
-- Acceptance criteria
+- Technical constraints
 
-### Step 2: Generate Project Plan
+#### Step 1.2: Generate Project Plan
 
 Create a high-level implementation plan:
 1. Break down into epics (major feature areas)
@@ -39,65 +43,139 @@ Create a high-level implementation plan:
 3. Suggest implementation order
 4. Estimate complexity (S/M/L) for each epic
 
-### Step 3: Generate User Stories
+#### Step 1.3: Draft User Stories
 
-For each epic, create well-formed user stories following this format:
+For each epic, draft well-formed user stories following this format:
 
 ```
-**Title**: [Action-oriented title]
+### [Story Title]
 
 **As a** [user persona],
 **I want** [functionality],
 **So that** [benefit/value].
 
 **Acceptance Criteria**:
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
-- [ ] [Criterion 3]
 
-**Technical Notes**:
-[Implementation hints, API endpoints needed, etc.]
+**GIVEN** [initial context/state]
+**WHEN** [action taken]
+**THEN** [expected outcome]
 
-**Complexity**: [S/M/L]
+**GIVEN** [another context]
+**WHEN** [another action]
+**THEN** [another outcome]
+
 **Epic**: [Parent epic name]
+**Complexity**: [S/M/L]
 ```
 
-### Step 4: Review with User
+#### Step 1.4: Write Stories Document for Review
 
-Present the plan and user stories to the user for review:
+Write all stories to `stories.md` in the project root with this structure:
 
-```
-## Project Plan: [Project Name]
+```markdown
+# Project Stories: [Project Name]
 
-### Epics
-1. [Epic 1] - [X stories, complexity: M]
-2. [Epic 2] - [Y stories, complexity: L]
+## Summary
+- **Total Epics**: X
+- **Total Stories**: Y
+- **Jira Project**: [PROJECT-KEY]
+
+## Epics Overview
+1. [Epic 1 Name] - [brief description]
+2. [Epic 2 Name] - [brief description]
 ...
 
-### User Stories Summary
-[List all story titles grouped by epic]
+## Stories by Epic
 
-### Suggested Implementation Order
-1. [Epic/Story] - Foundation work
-2. [Epic/Story] - Core features
-3. [Epic/Story] - Enhancements
+### Epic 1: [Epic Name]
+
+#### [Story 1 Title]
+**As a** [persona], **I want** [functionality], **So that** [benefit].
+
+**Acceptance Criteria**:
+**GIVEN** [context]
+**WHEN** [action]
+**THEN** [outcome]
+
+**Complexity**: S/M/L
+
+---
+
+#### [Story 2 Title]
 ...
 
-Ready to create [N] Jira tickets? (yes/no/modify)
+### Epic 2: [Epic Name]
+...
 ```
 
-### Step 5: Create Jira Tickets
+#### Step 1.5: Present for Review
 
-Once approved, use the Atlassian MCP server to bulk create tickets:
+Tell the user:
+```
+I've written the project stories to `stories.md` for your review.
 
-1. Create Epic tickets first (issue type: Epic)
-2. Create Story tickets linked to their parent Epic
-3. Add labels: `generated-from-requirements`
-4. Set initial status to Backlog
+Summary:
+- X epics
+- Y user stories
+- Target Jira project: [PROJECT-KEY]
 
-### Step 6: Output Summary
+Please review and let me know:
+- "approved" - Create all tickets in Jira
+- Request changes - Tell me what to modify
 
-Provide a summary of created tickets (using the project key from arguments):
+To make changes, you can either:
+1. Edit `stories.md` directly and tell me when done
+2. Ask me to change specific stories (e.g., "update Story X to...", "remove the login story", "add a story for...")
+
+I will NOT create any Jira tickets until you explicitly approve.
+```
+
+**STOP and wait for user approval.** Do not proceed to Phase 2 until the user explicitly approves.
+
+#### Step 1.6: Iterate on Stories (If Requested)
+
+If the user requests changes:
+1. **Direct edits**: If user says they edited `stories.md` directly, read the file to see their changes
+2. **Conversational changes**: If user describes changes in chat:
+   - Update `stories.md` with the requested changes
+   - Summarize what was changed
+   - Ask if they want to make more changes or approve
+
+Repeat until user says "approved". Support requests like:
+- "Change story X to focus on..."
+- "Remove the [story name] story"
+- "Add a new story for [feature]"
+- "Split story X into two stories"
+- "Merge stories X and Y"
+- "Update the acceptance criteria for story X"
+
+---
+
+### Phase 2: Create Jira Tickets (After Approval Only)
+
+**Only proceed after user says "approved" or similar confirmation.**
+
+#### Step 2.1: Create Epic Tickets
+
+Use the Atlassian MCP server to create Epic tickets first:
+- Issue type: Epic
+- Include epic description
+- Add label: `generated-from-requirements`
+
+#### Step 2.2: Create Story Tickets
+
+For each story in `stories.md`:
+- Issue type: Story
+- Link to parent Epic
+- Description includes:
+  - User story (As a... I want... So that...)
+  - Acceptance criteria in GIVEN/WHEN/THEN format
+- Add label: `generated-from-requirements`
+- Set initial status to Backlog
+
+#### Step 2.3: Output Summary
+
+Provide a summary of created tickets:
 
 ```
 ## Created Jira Tickets
@@ -127,3 +205,10 @@ Next steps:
 - If requirements file not found: Prompt user for correct path
 - If Jira auth fails: Guide user through OAuth flow
 - If ticket creation fails: Log which tickets succeeded, retry failed ones
+
+## Important Rules
+
+- **Never create Jira tickets without explicit user approval**
+- Always write to `stories.md` first so user can review
+- Use GIVEN/WHEN/THEN format for all acceptance criteria
+- Wait for user to say "approved" before creating any tickets
