@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(make:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)"{% if cookiecutter.backend_choice == 'python' %},
+      "Bash(pip:*)",
+      "Bash(python:*)",
+      "Bash(pytest:*)",
+      "Bash(flask:*)",
+      "Bash(ruff:*)",
+      "Bash(mypy:*)"{% endif %}
+    ]
+  }{% if cookiecutter.enable_jira_integration == 'yes' %},
+  "mcpServers": {
+    "atlassian": {
+      "type": "sse",
+      "url": "https://mcp.atlassian.com/v1/sse"
+    }
+  }{% endif %}
+}
