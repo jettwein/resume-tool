@@ -105,6 +105,20 @@ Use the `/jira-task` command or ask Claude directly:
 3. Implement: Use explore-plan-code-commit workflow
 4. Update Jira: Add implementation notes as comment
 5. Create PR: Link to Jira issue in PR description
+
+### Workflow: Requirements to Jira Tickets
+Use `/init-project` to bootstrap a project from a requirements document:
+
+1. **Prepare requirements**: Copy `requirements.md.example` to `requirements.md` and fill in your project details
+2. **Run init-project**: Execute `/init-project` (or `/init-project path/to/requirements.md`)
+3. **Review plan**: Claude will generate epics and user stories for your approval
+4. **Create tickets**: Once approved, Claude bulk-creates Jira tickets
+5. **Start development**: Use `/jira-task {{ cookiecutter.jira_project_key }}-X` to implement each ticket
+
+This workflow is ideal for:
+- Starting a new project from a PRD or requirements doc
+- Converting meeting notes into actionable tickets
+- Breaking down a large feature into trackable stories
 {% endif %}
 
 ## Multi-Agent Workflows

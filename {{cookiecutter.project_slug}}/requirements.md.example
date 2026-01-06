@@ -1,0 +1,89 @@
+# Project Requirements: {{ cookiecutter.project_name }}
+
+> Copy this file to `requirements.md` and customize for your project.
+> Then run `/init-project` to generate a plan and create Jira tickets.
+
+## Project Overview
+
+[Describe the project in 2-3 paragraphs. What problem does it solve? Who is it for?]
+
+Example:
+> This application provides a task management system for small teams. It allows users to create, assign, and track tasks through a simple web interface. The goal is to replace spreadsheet-based tracking with a purpose-built tool that provides better visibility and collaboration.
+
+## User Personas
+
+### Primary User: [Role Name]
+- **Description**: [Who are they?]
+- **Goals**: [What do they want to accomplish?]
+- **Pain Points**: [What problems do they face today?]
+
+### Secondary User: [Role Name]
+- **Description**: [Who are they?]
+- **Goals**: [What do they want to accomplish?]
+
+## Functional Requirements
+
+### FR-1: [Feature Area Name]
+
+**Description**: [What should this feature do?]
+
+**User Stories**:
+- As a [user], I want to [action], so that [benefit]
+- As a [user], I want to [action], so that [benefit]
+
+**Acceptance Criteria**:
+- [ ] [Specific, testable criterion]
+- [ ] [Specific, testable criterion]
+
+### FR-2: [Feature Area Name]
+
+**Description**: [What should this feature do?]
+
+**User Stories**:
+- As a [user], I want to [action], so that [benefit]
+
+**Acceptance Criteria**:
+- [ ] [Specific, testable criterion]
+
+## Non-Functional Requirements
+
+### Performance
+- Page load time: < [X] seconds
+- API response time: < [X] ms
+- Concurrent users supported: [N]
+
+### Security
+- Authentication method: [OAuth/JWT/etc.]
+- Data encryption: [Requirements]
+- Compliance: [GDPR/HIPAA/etc. if applicable]
+
+### Scalability
+- Expected initial users: [N]
+- Expected growth: [X users/month]
+
+### Availability
+- Uptime target: [99.X%]
+- Maintenance windows: [When acceptable]
+
+## Technical Constraints
+
+- Must integrate with: [Existing systems]
+- Technology preferences: [Languages, frameworks]
+- Hosting requirements: [Cloud provider, region]
+- Budget constraints: [If applicable]
+
+## Out of Scope
+
+- [Feature or capability explicitly NOT included]
+- [Feature or capability explicitly NOT included]
+
+## Success Metrics
+
+- [Metric 1]: [Target value]
+- [Metric 2]: [Target value]
+
+## Timeline
+
+- **Phase 1 (MVP)**: [Target date] - [What's included]
+- **Phase 2**: [Target date] - [What's included]
+- **Phase 3**: [Target date] - [What's included]

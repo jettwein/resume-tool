@@ -68,6 +68,7 @@ This project is optimized for use with [Claude Code](https://claude.ai/code). Se
 
 ### Custom Commands
 
+- `/init-project` - Read requirements.md and create Jira epics/stories
 - `/jira-task <issue-key>` - Fetch a Jira issue and plan implementation
 - `/new-feature <description>` - Implement a feature with explore-plan-code-commit workflow
 - `/review` - Review current changes before creating a PR
