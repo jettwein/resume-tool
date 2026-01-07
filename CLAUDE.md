@@ -8,6 +8,7 @@ This file is the **single source of truth** for Claude Code when working in this
 - **Claude should update**: When Claude discovers something important or establishes a new convention, it should add it here
 - **Humans should update**: When humans make decisions or want to guide Claude's behavior, add it here
 - **Read first**: Claude should always read this file at the start of a session
+- **ALWAYS document**: Any new workflow, convention, or process change MUST be added to this file
 
 ---
 
@@ -196,6 +197,22 @@ Claude must update Jira ticket status as work progresses:
 - **PR merged** → Move ticket to "Done"
 
 This keeps Jira in sync and helps coordinate multi-agent work.
+
+### After Creating a PR
+Claude can automatically check if a PR has been merged:
+```bash
+gh pr view <PR-number> --json state --jq '.state'
+```
+
+**User can say any of these to proceed:**
+- "continue" or "next" - Claude checks PR status and proceeds if merged
+- "merged" - Claude proceeds with cleanup
+- Give a new task - Claude checks PR status first
+
+**After merge is confirmed, Claude will:**
+1. Pull latest main: `git checkout main && git pull`
+2. Delete feature branch: `git branch -d <branch-name>`
+3. Update Jira: `jira issue move <KEY> "Done"`
 
 ---
 
