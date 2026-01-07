@@ -129,6 +129,7 @@ This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira int
 git checkout main
 git pull origin main
 git checkout -b feature/<jira-key>-<description>
+jira issue move <jira-key> "In Progress"  # Update Jira status
 ```
 Never commit directly to main. All work must happen on a feature branch.
 
@@ -142,6 +143,14 @@ Never commit directly to main. All work must happen on a feature branch.
 3. **Wait for human review** - DO NOT merge without approval
 4. Address feedback, push updates
 5. Human merges when approved
+6. After merge: `jira issue move <jira-key> "Done"`
+
+### Jira Status Updates
+Claude must update Jira ticket status as work progresses:
+- **Starting work** → Move ticket to "In Progress"
+- **PR merged** → Move ticket to "Done"
+
+This keeps Jira in sync and helps coordinate multi-agent work.
 
 ---
 
