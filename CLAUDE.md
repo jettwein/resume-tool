@@ -52,10 +52,41 @@ cd ../project-feature-b && claude
 
 ## Jira Integration
 
-The Atlassian MCP server is configured in `.claude/settings.json`. On first use:
-1. Claude will prompt for OAuth authentication
-2. Authorize in browser when redirected
-3. Return to Claude Code to continue
+This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira integration.
+
+### One-Time Setup (per developer)
+
+1. **Install jira-cli**:
+   ```bash
+   brew install ankitpokhrel/jira-cli/jira-cli
+   ```
+
+2. **Create an API token**:
+   - Go to https://id.atlassian.com/manage-profile/security/api-tokens
+   - Click "Create API token"
+   - Name it (e.g., "jira-cli")
+   - Copy the token
+
+3. **Add token to your shell** (add to `~/.zshrc` or `~/.bashrc`):
+   ```bash
+   export JIRA_API_TOKEN="your-api-token-here"
+   ```
+
+4. **Configure jira-cli**:
+   ```bash
+   source ~/.zshrc  # reload shell config
+   jira init --installation cloud --server https://yourcompany.atlassian.net --login your-email@company.com
+   ```
+
+5. **Verify connection**:
+   ```bash
+   jira project list
+   ```
+
+### Notes
+- API tokens work even if your org uses SSO/OAuth for web login
+- Each developer maintains their own `~/.config/.jira/.config.yml` locally
+- No credentials are stored in the repo
 
 ---
 

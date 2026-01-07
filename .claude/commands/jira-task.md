@@ -6,9 +6,16 @@ Read a Jira issue and prepare for implementation.
 
 $ARGUMENTS - The Jira issue key (e.g., ACME-123)
 
+## Prerequisites
+
+- jira-cli installed and configured (see CLAUDE.md for setup)
+
 ## Instructions
 
-1. Fetch the Jira issue specified: $ARGUMENTS
+1. Fetch the Jira issue using jira-cli:
+   ```bash
+   jira issue view $ARGUMENTS
+   ```
 2. Extract and summarize:
    - Title and description
    - Acceptance criteria

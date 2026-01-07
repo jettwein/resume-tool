@@ -43,3 +43,7 @@ npm-debug.log*
 # Misc
 *.bak
 .cache/
+
+# Project-specific files (created per-clone)
+requirements.md
+stories.md

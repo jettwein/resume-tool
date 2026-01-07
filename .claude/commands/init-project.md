@@ -18,7 +18,7 @@ $ARGUMENTS - `<project-key> [requirements-file]`
 ## Prerequisites
 
 - Jira project must already exist in your Atlassian instance
-- Atlassian MCP server authenticated (OAuth will prompt on first use)
+- jira-cli installed and configured (see CLAUDE.md for setup)
 
 ## Instructions
 
@@ -157,21 +157,22 @@ Repeat until user says "approved". Support requests like:
 
 #### Step 2.1: Create Epic Tickets
 
-Use the Atlassian MCP server to create Epic tickets first:
-- Issue type: Epic
-- Include epic description
+Use jira-cli to create Epic tickets first:
+```bash
+jira issue create -tEpic -P<PROJECT> -s"Epic Title" -b"Epic description"
+```
 - Add label: `generated-from-requirements`
 
 #### Step 2.2: Create Story Tickets
 
-For each story in `stories.md`:
-- Issue type: Story
-- Link to parent Epic
+For each story in `stories.md`, use jira-cli:
+```bash
+jira issue create -tStory -P<PROJECT> -s"Story Title" -b"Description with acceptance criteria" -lgenerated-from-requirements
+```
+- Link to parent Epic using: `jira issue link <story-key> <epic-key> "is child of"`
 - Description includes:
   - User story (As a... I want... So that...)
   - Acceptance criteria in GIVEN/WHEN/THEN format
-- Add label: `generated-from-requirements`
-- Set initial status to Backlog
 
 #### Step 2.3: Output Summary
 
@@ -203,7 +204,7 @@ Next steps:
 
 - If project key not provided: Ask user for the Jira project key
 - If requirements file not found: Prompt user for correct path
-- If Jira auth fails: Guide user through OAuth flow
+- If Jira auth fails: Check JIRA_API_TOKEN is set and jira-cli is configured (see CLAUDE.md)
 - If ticket creation fails: Log which tickets succeeded, retry failed ones
 
 ## Important Rules

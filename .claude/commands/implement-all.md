@@ -21,10 +21,13 @@ $ARGUMENTS - `<project-key> [--wait | --batch]`
 
 ### Step 1: Fetch Stories from Jira
 
-Use the Atlassian MCP server to fetch all stories:
+Use jira-cli to fetch all stories:
+```bash
+jira issue list -P<PROJECT> -tStory -s"Backlog" -s"To Do" --plain --columns key,summary,status
+```
 - Project key from arguments
 - Status: Backlog or To Do (not already In Progress or Done)
-- Include story descriptions and acceptance criteria
+- For each story, get details: `jira issue view <KEY>`
 
 ### Step 2: Analyze Dependencies
 
@@ -79,7 +82,10 @@ git checkout -b feature/[PROJ-X]-[description]
 ```
 
 #### 4.2: Update Jira Status
-Set story status to "In Progress"
+Set story status to "In Progress":
+```bash
+jira issue move <KEY> "In Progress"
+```
 
 #### 4.3: Implement the Story
 - Read the story requirements and acceptance criteria
@@ -99,7 +105,10 @@ git push -u origin feature/[PROJ-X]-[description]
 gh pr create --base main --fill
 ```
 
-Update Jira status to "In Review"
+Update Jira status to "In Review":
+```bash
+jira issue move <KEY> "In Review"
+```
 
 #### 4.6: Handle Mode
 
@@ -152,7 +161,7 @@ After all stories are complete (or PRs created in batch mode):
 
 - **Merge conflict**: Stop, notify user, provide resolution steps
 - **Tests failing**: Stop on that story, show failures, ask how to proceed
-- **Jira API error**: Retry, then continue without status update if needed
+- **Jira CLI error**: Check JIRA_API_TOKEN is set; retry, then continue without status update if needed
 - **No stories found**: Notify user, check project key and filters
 
 ## Important Rules
