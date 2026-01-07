@@ -1,89 +1,46 @@
 # Project Requirements: [Your Project Name]
 
-> Copy this file to `requirements.md` and customize for your project.
-> Then run `/init-project` to generate a plan and create Jira tickets.
+> Copy this file to `requirements.md` and fill in the sections below.
+> Then run `/init-project JIRA-PROJ-ID` - Claude will generate all user stories for you.
 
 ## Project Overview
 
-[Describe the project in 2-3 paragraphs. What problem does it solve? Who is it for?]
-
-Example:
-> This application provides a task management system for small teams. It allows users to create, assign, and track tasks through a simple web interface. The goal is to replace spreadsheet-based tracking with a purpose-built tool that provides better visibility and collaboration.
+[Describe the project in 2-3 paragraphs. What problem does it solve? Who is it for? What's the core value?]
 
 ## User Personas
 
-### Primary User: [Role Name]
-- **Description**: [Who are they?]
-- **Goals**: [What do they want to accomplish?]
-- **Pain Points**: [What problems do they face today?]
-
-### Secondary User: [Role Name]
-- **Description**: [Who are they?]
+### [Role Name] (Primary)
+- **Who**: [Brief description]
 - **Goals**: [What do they want to accomplish?]
 
-## Functional Requirements
+### [Role Name] (Secondary)
+- **Who**: [Brief description]
+- **Goals**: [What do they want to accomplish?]
 
-### FR-1: [Feature Area Name]
+## Features
 
-**Description**: [What should this feature do?]
+List the high-level capabilities. Claude will break these into detailed user stories.
 
-**User Stories**:
-- As a [user], I want to [action], so that [benefit]
-- As a [user], I want to [action], so that [benefit]
+### [Feature Area 1]
+[What should this feature do? 1-2 sentences.]
 
-**Acceptance Criteria**:
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
+### [Feature Area 2]
+[What should this feature do? 1-2 sentences.]
 
-### FR-2: [Feature Area Name]
+### [Feature Area 3]
+[What should this feature do? 1-2 sentences.]
 
-**Description**: [What should this feature do?]
+## Technical Constraints (Optional)
 
-**User Stories**:
-- As a [user], I want to [action], so that [benefit]
-
-**Acceptance Criteria**:
-- [ ] [Specific, testable criterion]
-
-## Non-Functional Requirements
-
-### Performance
-- Page load time: < [X] seconds
-- API response time: < [X] ms
-- Concurrent users supported: [N]
-
-### Security
-- Authentication method: [OAuth/JWT/etc.]
-- Data encryption: [Requirements]
-- Compliance: [GDPR/HIPAA/etc. if applicable]
-
-### Scalability
-- Expected initial users: [N]
-- Expected growth: [X users/month]
-
-### Availability
-- Uptime target: [99.X%]
-- Maintenance windows: [When acceptable]
-
-## Technical Constraints
-
-- Must integrate with: [Existing systems]
-- Technology preferences: [Languages, frameworks]
-- Hosting requirements: [Cloud provider, region]
-- Budget constraints: [If applicable]
+- **Tech stack**: [Languages, frameworks, or "no preference"]
+- **Integrations**: [External systems to connect with]
+- **Hosting**: [Cloud provider, on-prem, or "no preference"]
 
 ## Out of Scope
 
-- [Feature or capability explicitly NOT included]
-- [Feature or capability explicitly NOT included]
+- [What this project will NOT include]
+- [Features to explicitly exclude]
 
-## Success Metrics
+## Success Criteria (Optional)
 
-- [Metric 1]: [Target value]
-- [Metric 2]: [Target value]
-
-## Timeline
-
-- **Phase 1 (MVP)**: [Target date] - [What's included]
-- **Phase 2**: [Target date] - [What's included]
-- **Phase 3**: [Target date] - [What's included]
+- [How will you know this project is successful?]
