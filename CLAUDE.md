@@ -121,6 +121,51 @@ This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira int
 
 ---
 
+## Adding Features After Initial Implementation
+
+Once a project is running, there are three ways to add new features:
+
+### Option 1: Quick Features (Conversational)
+Best for: 1-2 small features
+
+Just tell Claude what you want:
+> "Add a dark mode toggle to the app"
+
+Claude will:
+1. Create a Jira ticket
+2. Implement the feature
+3. Create a PR
+
+### Option 2: Work on Existing Tickets
+Best for: Pre-planned work or tickets created by others
+
+Reference a Jira ticket directly:
+> "Work on PM-10"
+
+Or use the command:
+> `/jira-task PM-10`
+
+Claude will fetch the ticket details and implement it.
+
+### Option 3: Batch of New Features (Requirements Update)
+Best for: Major new feature areas or significant scope additions
+
+1. Update `requirements.md` with new features
+2. Run `/init-project JIRA-PROJ-ID`
+3. Review generated stories in `stories.md`
+4. Say "approved" to create Jira tickets
+5. Use `/implement-all` or work tickets individually
+
+### Which Option to Choose?
+| Scope | Recommended Approach |
+|-------|---------------------|
+| Quick fix or small feature | Option 1 (conversational) |
+| Ticket already exists | Option 2 (`/jira-task`) |
+| Multiple related features | Option 3 (requirements update) |
+| New feature area | Option 3 (requirements update) |
+
+---
+
 ## Git Workflow
 
 ### Starting New Work
