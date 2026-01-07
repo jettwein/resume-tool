@@ -49,3 +49,22 @@
   padding: 24px;
   font-size: 14px;
 }
+
+.btn-add-column {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  background: transparent;
+  border: 2px dashed #dfe1e6;
+  border-radius: 6px;
+  font-size: 20px;
+  color: #a5adba;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-add-column:hover {
+  background: #ebecf0;
+  border-color: #c1c7d0;
+  color: #5e6c84;
+}
