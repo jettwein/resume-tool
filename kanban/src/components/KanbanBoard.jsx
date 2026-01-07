@@ -100,6 +100,7 @@ function KanbanBoard() {
             items={todoItems}
             onUpdate={handleUpdateTodo}
             onDelete={handleDeleteTodo}
+            onAddClick={() => setShowAddForm(true)}
           />
           <Column
             status="doing"

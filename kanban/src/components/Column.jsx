@@ -8,7 +8,7 @@ const COLUMN_TITLES = {
   done: 'Done'
 }
 
-function Column({ status, items, onUpdate, onDelete }) {
+function Column({ status, items, onUpdate, onDelete, onAddClick }) {
   const { isOver, setNodeRef } = useDroppable({
     id: status,
   })
@@ -30,6 +30,11 @@ function Column({ status, items, onUpdate, onDelete }) {
         ))}
         {items.length === 0 && (
           <p className="column-empty">Drop items here</p>
+        )}
+        {onAddClick && (
+          <button className="btn-add-column" onClick={onAddClick}>
+            +
+          </button>
         )}
       </div>
     </div>
