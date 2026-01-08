@@ -169,6 +169,8 @@ Best for: Major new feature areas or significant scope additions
 
 ## Git Workflow
 
+> **Note**: Core workflow is also in [WORKFLOW.md](./WORKFLOW.md) for syncing to cloned projects.
+
 ### Starting New Work
 **ALWAYS create a feature branch from main before starting any new work:**
 ```bash
