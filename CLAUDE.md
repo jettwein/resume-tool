@@ -91,6 +91,21 @@ This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira int
 
 ---
 
+## GitHub Actions Setup
+
+The `@claude` PR review feature requires GitHub repository secrets. Set these in **Settings → Secrets and variables → Actions**:
+
+| Secret | Description | How to get it |
+|--------|-------------|---------------|
+| `ANTHROPIC_API_KEY` | Claude API key | [console.anthropic.com](https://console.anthropic.com/) |
+| `JIRA_API_TOKEN` | Jira API token | [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens) |
+| `JIRA_EMAIL` | Your Jira login email | Your Atlassian account email |
+| `JIRA_SERVER` | Jira server URL | e.g., `https://yourcompany.atlassian.net` |
+
+Once configured, the GitHub Action at `.github/workflows/claude.yml` will automatically respond to `@claude` mentions in PR comments.
+
+---
+
 ## Custom Commands
 
 | Command | Description |
@@ -231,9 +246,44 @@ Never commit directly to main. All work must happen on a feature branch.
 1. Push branch: `git push -u origin <branch-name>`
 2. Create PR: `gh pr create --base main --fill`
 3. **Wait for human review** - DO NOT merge without approval
-4. Address feedback, push updates
+4. Address feedback, push updates (see **@claude PR Reviews** below)
 5. Human merges when approved
 6. After merge: `jira issue move <jira-key> "Done"`
+
+### @claude PR Reviews
+
+Humans can request changes directly in PR comments using `@claude`:
+
+```
+@claude Please fix the type errors in this file
+@claude Can you add error handling to this function?
+@claude Refactor this to use the shared Button component
+```
+
+**The flow in practice:**
+
+1. **Claude creates PR** for a feature branch
+2. **Human reviews** the PR and leaves a comment:
+   ```
+   @claude Please add error handling to the submit function
+   ```
+3. **GitHub Action triggers** automatically (listens for `@claude` mentions)
+4. **Claude spins up** in a GitHub Actions runner, checks out the PR branch
+5. **Claude reads context** — the PR diff, your comment, CLAUDE.md, custom commands, shared components
+6. **Claude makes changes** based on your feedback and pushes to the branch
+7. **Human sees the update** in the PR and continues the review
+8. **Repeat** as needed until the PR is ready to merge
+
+**What Claude can do in PR reviews:**
+- Fix bugs and type errors
+- Refactor code based on feedback
+- Add missing error handling
+- Update to use shared components
+- Any code change a human reviewer requests
+
+**Note:** There is no persistent Claude instance waiting. Each `@claude` mention triggers a fresh GitHub Actions job that spins up, does the work, and shuts down.
+
+This enables an iterative review workflow without the human needing to make changes themselves.
 
 ### Jira Status Updates
 Claude must update Jira ticket status as work progresses:
