@@ -28,8 +28,10 @@ jobs:
       - name: Install jira-cli
         run: |
           # Download and install jira-cli
-          curl -sSL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.2/jira_1.5.2_linux_x86_64.tar.gz | tar xz
-          sudo mv jira /usr/local/bin/
+          curl -sSL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.2/jira_1.5.2_linux_x86_64.tar.gz -o jira.tar.gz
+          tar xzf jira.tar.gz
+          sudo mv jira_1.5.2_linux_x86_64/bin/jira /usr/local/bin/
+          rm -rf jira.tar.gz jira_1.5.2_linux_x86_64
 
           # Configure jira-cli (non-interactive)
           mkdir -p ~/.config/.jira
