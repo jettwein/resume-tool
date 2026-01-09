@@ -1,0 +1,134 @@
+name: Slack Notifications
+
+on:
+  pull_request:
+    types: [opened, closed]
+  pull_request_review:
+    types: [submitted]
+  issue_comment:
+    types: [created]
+
+jobs:
+  notify-pr-created:
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack - PR Created
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🔀 *New PR:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> (#${{ github.event.pull_request.number }})"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by *${{ github.event.pull_request.user.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  notify-pr-merged:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack - PR Merged
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "✅ *Merged:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> (#${{ github.event.pull_request.number }})"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "merged by *${{ github.event.pull_request.merged_by.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  notify-review-requested:
+    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack - Review Submitted
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "👀 *Review submitted* on <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> - ${{ github.event.review.state }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by *${{ github.event.review.user.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  notify-claude-triggered:
+    if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack - Claude Triggered
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🤖 *Claude triggered* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by *${{ github.event.comment.user.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }

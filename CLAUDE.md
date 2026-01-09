@@ -106,6 +106,33 @@ Once configured, the GitHub Action at `.github/workflows/claude.yml` will automa
 
 ---
 
+## Slack Notifications
+
+The repo sends notifications to Slack for key events. Add this secret:
+
+| Secret | Description |
+|--------|-------------|
+| `SLACK_WEBHOOK_URL` | Slack incoming webhook URL |
+
+**To get a webhook URL:**
+1. Go to [api.slack.com/apps](https://api.slack.com/apps)
+2. Create a new app → **From scratch**
+3. Go to **Incoming Webhooks** → Toggle **On**
+4. Click **Add New Webhook to Workspace**
+5. Select your channel and copy the URL
+
+**Events that trigger notifications:**
+
+| Event | Message |
+|-------|---------|
+| PR created | 🔀 New PR: Title (#123) |
+| PR merged | ✅ Merged: Title (#123) |
+| Review submitted | 👀 Review submitted on #123 |
+| @claude triggered | 🤖 Claude triggered on #123 |
+| @claude finished | 🤖 Claude finished on #123 - success/failure |
+
+---
+
 ## Custom Commands
 
 | Command | Description |

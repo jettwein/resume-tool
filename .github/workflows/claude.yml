@@ -56,3 +56,31 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
         env:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Notify Slack - Claude Finished
+        if: always()
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🤖 *Claude finished* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}> - ${{ job.status }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
