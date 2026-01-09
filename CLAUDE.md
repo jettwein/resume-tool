@@ -100,6 +100,48 @@ This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira int
 | `/jira-task JIRA-PROJ-ID-123` | Fetch issue and plan implementation |
 | `/new-feature <desc>` | Implement with explore-plan-code-commit workflow |
 | `/review` | Review changes before PR |
+| `/ui-components` | List available shared UI components |
+
+---
+
+## UI Development
+
+This project uses the **rippl-shared-components** library for consistent UI across applications.
+
+### Golden Rule
+**ALWAYS check `COMPONENTS.md` before creating any UI component.** Use existing shared components first. Only create custom components if nothing suitable exists in the library.
+
+### Tech Stack
+- **React 19** + **TypeScript**
+- **Material-UI (MUI) 6** for component foundation
+- **Emotion** for CSS-in-JS styling (via MUI's `sx` prop)
+- **Montserrat** font family
+
+### Component Usage
+```tsx
+// Import from the shared library
+import { Button, Card, Avatar, LoadingSpinner } from 'rippl-shared-components'
+import { lightTheme, darkTheme } from 'rippl-shared-components'
+```
+
+### Styling Guidelines
+1. **Use the `sx` prop** for component-specific styling (MUI pattern)
+2. **Use theme tokens** for colors, spacing, and typography—don't hardcode values
+3. **Follow existing patterns** in the shared components library
+
+### Before Building UI
+1. Run `/ui-components` to see available components
+2. Check `COMPONENTS.md` for props and usage examples
+3. If a component doesn't exist, consider whether it should be added to the shared library
+
+### Design Tokens (Reference)
+| Token | Value | Usage |
+|-------|-------|-------|
+| Primary | `#312F7A` | Main brand color |
+| Secondary | `#F73C36` | Accent/alert |
+| Accent | `#3858E9` | Ripply AI branding |
+| Success | `#42B042` | Success states |
+| Error | `#E85621` | Error states |
 
 ---
 
