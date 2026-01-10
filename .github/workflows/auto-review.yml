@@ -13,49 +13,46 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Run Claude Code Review
-        uses: anthropics/claude-code-action@main
+      - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          direct_prompt: |
-            Review this pull request and post a comment with your findings.
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
 
-            ## Review Guidelines
+            Review this pull request. This is ADVISORY only - do not block or request changes.
 
-            This is an ADVISORY review only. Do not request changes or block the PR.
-            Focus on being helpful, not gatekeeping.
-
-            ### What to check:
-            - Potential bugs, edge cases, and error handling gaps
+            ## What to check:
+            - Potential bugs, edge cases, error handling gaps
             - Security concerns (XSS, injection, exposed secrets)
-            - For React components: hooks usage, accessibility, TypeScript types
-            - For TypeScript: error handling, type safety, async/await, null checks
-            - For config files: exposed secrets, valid syntax
+            - React: hooks usage, accessibility, TypeScript types (avoid 'any')
+            - TypeScript: error handling, type safety, null checks
+            - Config files: exposed secrets, valid syntax
 
-            ### Output Format
+            ## Instructions:
+            1. Read the PR diff using `gh pr diff ${{ github.event.pull_request.number }}`
+            2. Analyze the changes
+            3. Post your review using `gh pr comment ${{ github.event.pull_request.number }} --body "YOUR_REVIEW"`
 
-            Post a PR comment structured as:
-
-            ## Code Review
+            ## Review format:
+            ```
+            ## 🤖 Auto Code Review
 
             ### Summary
-            One sentence overall assessment.
+            One sentence assessment.
 
             ### Findings
-            For each file with feedback:
-            **filename** (lines X-Y): Issue or suggestion
-
-            If a file looks good, say: **filename** - Looks good!
+            **filename** (line X): Issue or suggestion
 
             ### Verdict
-            One of:
-            - ✅ **Looks good** - No blocking issues
-            - ⚠️ **Minor suggestions** - Safe to merge, consider the feedback
-            - 🔍 **Needs discussion** - Some items worth talking through
+            ✅ Looks good / ⚠️ Minor suggestions / 🔍 Needs discussion
+            ```
 
-            Remember: Be constructive and helpful, not a gatekeeper.
+            Only post the GitHub comment - don't output anything else.
+
+          claude_args: |
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Glob,Grep"
