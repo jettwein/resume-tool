@@ -1,5 +1,4 @@
-import { Box, Typography } from '@mui/material'
-import { Button, Card } from 'rippl-shared-components'
+import { Box, Typography, Button, Card, CardContent } from '@mui/material'
 
 function App() {
   return (
@@ -9,12 +8,12 @@ function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        bgcolor: 'background.default',
+        bgcolor: '#f5f5f5',
         p: 4,
       }}
     >
-      <Card>
-        <Box sx={{ textAlign: 'center', p: 4 }}>
+      <Card sx={{ maxWidth: 500, borderRadius: 2 }}>
+        <CardContent sx={{ textAlign: 'center', p: 4 }}>
           <Typography variant="h4" gutterBottom sx={{ color: 'primary.main' }}>
             Agentic Coding Template
           </Typography>
@@ -23,11 +22,12 @@ function App() {
           </Typography>
           <Button
             variant="contained"
+            sx={{ borderRadius: 50 }}
             onClick={() => window.open('https://github.com/ripplcare/agentic-coding-poc', '_blank')}
           >
             View on GitHub
           </Button>
-        </Box>
+        </CardContent>
       </Card>
     </Box>
   )
