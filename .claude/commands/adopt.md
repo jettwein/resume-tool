@@ -170,12 +170,62 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
+      - name: Install jira-cli
+        run: |
+          curl -sSL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.2/jira_1.5.2_linux_x86_64.tar.gz -o jira.tar.gz
+          tar xzf jira.tar.gz
+          sudo mv jira_1.5.2_linux_x86_64/bin/jira /usr/local/bin/
+          rm -rf jira.tar.gz jira_1.5.2_linux_x86_64
+          mkdir -p ~/.config/.jira
+          cat > ~/.config/.jira/.config.yml << EOF
+          board:
+            id: 0
+            type: ""
+          epic:
+            name: Epic
+            link: Parent
+          installation: cloud
+          login: ${{ secrets.JIRA_EMAIL }}
+          project:
+            key: ""
+            type: ""
+          server: ${{ secrets.JIRA_SERVER }}
+          EOF
+
       - name: Run Claude Code Action
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@main
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
         env:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Notify Slack - Claude Finished
+        if: always()
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🤖 *Claude finished* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}> - ${{ job.status }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
 ```
 
 **.github/workflows/auto-review.yml** - Automatic code review:
@@ -244,7 +294,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'opened'
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Slack
+      - name: Notify Slack - PR Created
         uses: slackapi/slack-github-action@v2.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -256,8 +306,17 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🔀 *New PR:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> (#${{ github.event.pull_request.number }})\nby *${{ github.event.pull_request.user.login }}* in `${{ github.repository }}`"
+                    "text": "🔀 *New PR:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> (#${{ github.event.pull_request.number }})"
                   }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by *${{ github.event.pull_request.user.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
                 }
               ]
             }
@@ -266,7 +325,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Slack
+      - name: Notify Slack - PR Merged
         uses: slackapi/slack-github-action@v2.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -278,8 +337,48 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "✅ *Merged:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> (#${{ github.event.pull_request.number }})\nby *${{ github.event.pull_request.merged_by.login }}* in `${{ github.repository }}`"
+                    "text": "✅ *Merged:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}> (#${{ github.event.pull_request.number }})"
                   }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "merged by *${{ github.event.pull_request.merged_by.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  notify-review-submitted:
+    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack - Review Submitted
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "👀 *Review submitted* on <${{ github.event.pull_request.html_url }}|#${{ github.event.pull_request.number }}> - ${{ github.event.review.state }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by *${{ github.event.review.user.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
                 }
               ]
             }
@@ -288,7 +387,7 @@ jobs:
     if: github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Slack
+      - name: Notify Slack - Claude Triggered
         uses: slackapi/slack-github-action@v2.0.0
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -300,8 +399,17 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🤖 *Claude triggered* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}>\nby *${{ github.event.comment.user.login }}* in `${{ github.repository }}`"
+                    "text": "🤖 *Claude triggered* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}>"
                   }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "by *${{ github.event.comment.user.login }}* in `${{ github.repository }}`"
+                    }
+                  ]
                 }
               ]
             }
@@ -373,12 +481,14 @@ After creating all files, tell the user:
 **Next steps:**
 
 1. **Add GitHub secrets** (Settings → Secrets → Actions):
-   - `ANTHROPIC_API_KEY` - Claude API key
-   - `JIRA_API_TOKEN` - Jira API token (if using Jira)
-   - `SLACK_WEBHOOK_URL` - Slack webhook (if using Slack)
+   - `ANTHROPIC_API_KEY` - Claude API key ([console.anthropic.com](https://console.anthropic.com/))
+   - `JIRA_API_TOKEN` - Jira API token ([id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens))
+   - `JIRA_EMAIL` - Your Jira login email
+   - `JIRA_SERVER` - Jira server URL (e.g., `https://yourcompany.atlassian.net`)
+   - `SLACK_WEBHOOK_URL` - Slack webhook URL ([api.slack.com/apps](https://api.slack.com/apps))
 
 2. **Install Claude GitHub App** on this repo:
-   - Go to github.com/apps/claude
+   - Go to [github.com/apps/claude](https://github.com/apps/claude)
    - Install on this repository
 
 3. **Customize CLAUDE.md** with project-specific details
