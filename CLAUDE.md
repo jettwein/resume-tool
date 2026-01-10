@@ -210,10 +210,57 @@ gh secret set SLACK_WEBHOOK_URL
 
 ---
 
+## Adopting in Existing Repositories
+
+For existing repositories that weren't created from this template, use the `/adopt` command to set up the agentic coding workflow.
+
+### How to Adopt
+
+1. **Open Claude Code** in the existing repo:
+   ```bash
+   cd /path/to/existing-repo
+   claude
+   ```
+
+2. **Run the adopt command**:
+   ```
+   /adopt
+   ```
+
+3. **Follow the prompts** — Claude will:
+   - Verify you're in the right repo
+   - Create `.claude/commands/` with custom commands
+   - Create `.github/workflows/` with GitHub Actions
+   - Create a starter `CLAUDE.md`
+   - Provide a checklist of secrets to configure
+
+### What Gets Created
+
+| Directory/File | Purpose |
+|----------------|---------|
+| `.claude/commands/jira-task.md` | Jira ticket implementation workflow |
+| `.claude/commands/new-feature.md` | New feature workflow |
+| `.claude/commands/review.md` | Pre-PR code review |
+| `.claude/settings.json` | Claude permissions for git, gh, jira |
+| `.github/workflows/claude.yml` | @claude PR review trigger |
+| `.github/workflows/auto-review.yml` | Automatic code review |
+| `.github/workflows/slack-notifications.yml` | Slack notifications |
+| `CLAUDE.md` | Project instructions (customize this!) |
+
+### After Adopting
+
+1. **Add GitHub secrets** — see [GitHub Actions Setup](#github-actions-setup)
+2. **Install Claude GitHub App** — [github.com/apps/claude](https://github.com/apps/claude)
+3. **Customize CLAUDE.md** — add project-specific details, tech stack, conventions
+4. **Commit and push** the new files
+
+---
+
 ## Custom Commands
 
 | Command | Description |
 |---------|-------------|
+| `/adopt` | Adopt agentic workflow in an existing repository |
 | `/init-project JIRA-PROJ-ID [file]` | Read requirements and create Jira epics/stories |
 | `/implement-all JIRA-PROJ-ID [--wait\|--batch]` | Auto-implement all stories in dependency order |
 | `/jira-task JIRA-PROJ-ID-123` | Fetch issue and plan implementation |
