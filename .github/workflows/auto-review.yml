@@ -18,128 +18,44 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get changed files
-        id: changed-files
-        run: |
-          # Get list of changed files
-          FILES=$(gh pr diff ${{ github.event.pull_request.number }} --name-only)
-          echo "files<<EOF" >> $GITHUB_OUTPUT
-          echo "$FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-          # Detect file types
-          HAS_TSX=$(echo "$FILES" | grep -E '\.(tsx|jsx)$' || true)
-          HAS_TS=$(echo "$FILES" | grep -E '\.(ts|js)$' | grep -v -E '\.(tsx|jsx)$' || true)
-          HAS_CSS=$(echo "$FILES" | grep -E '\.(css|scss|styled)' || true)
-          HAS_CONFIG=$(echo "$FILES" | grep -E '\.(json|yml|yaml|toml|env)' || true)
-          HAS_DOCS=$(echo "$FILES" | grep -E '\.(md|mdx)$' || true)
-
-          echo "has_tsx=$([[ -n \"$HAS_TSX\" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-          echo "has_ts=$([[ -n \"$HAS_TS\" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-          echo "has_css=$([[ -n \"$HAS_CSS\" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-          echo "has_config=$([[ -n \"$HAS_CONFIG\" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-          echo "has_docs=$([[ -n \"$HAS_DOCS\" ]] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build review prompt
-        id: prompt
-        run: |
-          PROMPT="You are reviewing a pull request. Provide helpful, constructive feedback.
-
-          ## Review Guidelines
-
-          This is an ADVISORY review only. Do not request changes or block the PR.
-          Focus on being helpful, not gatekeeping.
-
-          ### General
-          - Look for potential bugs, edge cases, and error handling gaps
-          - Note any security concerns (XSS, injection, exposed secrets)
-          - Suggest improvements but acknowledge when code is fine as-is
-          "
-
-          if [[ "${{ steps.changed-files.outputs.has_tsx }}" == "true" ]]; then
-            PROMPT="$PROMPT
-          ### React Components (.tsx/.jsx)
-          - Check for proper use of hooks (dependency arrays, cleanup)
-          - Look for accessibility issues (missing aria labels, keyboard nav)
-          - Verify components use shared components from rippl-shared-components where appropriate
-          - Check for proper TypeScript types (avoid 'any')
-          - Look for potential re-render issues
-          "
-          fi
-
-          if [[ "${{ steps.changed-files.outputs.has_ts }}" == "true" ]]; then
-            PROMPT="$PROMPT
-          ### TypeScript/JavaScript (.ts/.js)
-          - Check for proper error handling (try/catch, error boundaries)
-          - Look for type safety issues
-          - Verify async/await usage is correct
-          - Check for potential null/undefined issues
-          "
-          fi
-
-          if [[ "${{ steps.changed-files.outputs.has_css }}" == "true" ]]; then
-            PROMPT="$PROMPT
-          ### Styles (.css/.scss)
-          - Check for hardcoded values that should use theme tokens
-          - Look for potential responsive/mobile issues
-          - Verify naming conventions are followed
-          "
-          fi
-
-          if [[ "${{ steps.changed-files.outputs.has_config }}" == "true" ]]; then
-            PROMPT="$PROMPT
-          ### Configuration (.json/.yml/.yaml)
-          - Check for exposed secrets or sensitive values
-          - Verify syntax is valid
-          - Look for potential breaking changes
-          "
-          fi
-
-          if [[ "${{ steps.changed-files.outputs.has_docs }}" == "true" ]]; then
-            PROMPT="$PROMPT
-          ### Documentation (.md/.mdx)
-          - Check for accuracy and clarity
-          - Look for broken links or outdated information
-          - Verify code examples are correct
-          "
-          fi
-
-          PROMPT="$PROMPT
-          ## Output Format
-
-          Structure your review as:
-
-          ### Summary
-          One sentence overall assessment.
-
-          ### File-by-File Review
-          For each file with feedback:
-          **filename.tsx**
-          - Line X: [Issue/suggestion]
-          - Line Y: [Issue/suggestion]
-
-          If a file looks good, just say: **filename.tsx** - No issues found.
-
-          ### Verdict
-          One of:
-          - ✅ **Looks good** - No blocking issues
-          - ⚠️ **Minor suggestions** - Safe to merge, consider the feedback
-          - 🔍 **Needs discussion** - Some items worth talking through
-
-          Remember: This is advisory feedback to help the author, not a gate to block merging.
-          "
-
-          # Escape for JSON
-          PROMPT_ESCAPED=$(echo "$PROMPT" | jq -Rs .)
-          echo "prompt=$PROMPT_ESCAPED" >> $GITHUB_OUTPUT
-
       - name: Run Claude Code Review
         uses: anthropics/claude-code-action@main
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Review this pull request.
+          direct_prompt: |
+            Review this pull request and post a comment with your findings.
 
-            ${{ fromJson(steps.prompt.outputs.prompt) }}
+            ## Review Guidelines
+
+            This is an ADVISORY review only. Do not request changes or block the PR.
+            Focus on being helpful, not gatekeeping.
+
+            ### What to check:
+            - Potential bugs, edge cases, and error handling gaps
+            - Security concerns (XSS, injection, exposed secrets)
+            - For React components: hooks usage, accessibility, TypeScript types
+            - For TypeScript: error handling, type safety, async/await, null checks
+            - For config files: exposed secrets, valid syntax
+
+            ### Output Format
+
+            Post a PR comment structured as:
+
+            ## Code Review
+
+            ### Summary
+            One sentence overall assessment.
+
+            ### Findings
+            For each file with feedback:
+            **filename** (lines X-Y): Issue or suggestion
+
+            If a file looks good, say: **filename** - Looks good!
+
+            ### Verdict
+            One of:
+            - ✅ **Looks good** - No blocking issues
+            - ⚠️ **Minor suggestions** - Safe to merge, consider the feedback
+            - 🔍 **Needs discussion** - Some items worth talking through
+
+            Remember: Be constructive and helpful, not a gatekeeper.
