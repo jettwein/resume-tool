@@ -133,9 +133,11 @@ The repo sends notifications to Slack for key events. Add this secret:
 
 ---
 
-## Vercel Preview Deployments
+## Vercel Preview Deployments (Optional)
 
 Every PR automatically gets a preview deployment URL, allowing reviewers to see changes live before merging.
+
+**This is optional.** If you don't need preview deployments, simply skip this section. The Vercel config files in the repo won't affect anything unless you connect to Vercel.
 
 ### Setup (per project)
 
@@ -177,12 +179,12 @@ When cloning this template for a new project, here's what you need to configure:
 
 ### Per-Project Setup Required
 
-| Item | Where | Secrets/Config Needed |
-|------|-------|----------------------|
-| **GitHub Actions** | Repo → Settings → Secrets | `ANTHROPIC_API_KEY`, `JIRA_API_TOKEN`, `JIRA_EMAIL`, `JIRA_SERVER`, `SLACK_WEBHOOK_URL` |
-| **Vercel** | vercel.com | Connect repo, add `GITHUB_TOKEN` env var |
-| **Claude GitHub App** | github.com/apps/claude | Install on the new repo |
-| **Jira CLI (local)** | Developer machine | Already configured if using existing setup |
+| Item | Where | Secrets/Config Needed | Required? |
+|------|-------|----------------------|-----------|
+| **GitHub Actions** | Repo → Settings → Secrets | `ANTHROPIC_API_KEY`, `JIRA_API_TOKEN`, `JIRA_EMAIL`, `JIRA_SERVER`, `SLACK_WEBHOOK_URL` | Yes |
+| **Claude GitHub App** | github.com/apps/claude | Install on the new repo | Yes |
+| **Jira CLI (local)** | Developer machine | Already configured if using existing setup | Yes |
+| **Vercel** | vercel.com | Connect repo, add `GITHUB_TOKEN` env var | Optional |
 
 ### Quick Setup Commands
 
