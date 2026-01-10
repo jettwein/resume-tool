@@ -354,6 +354,27 @@ Never commit directly to main. All work must happen on a feature branch.
 5. Human merges when approved
 6. After merge: `jira issue move <jira-key> "Done"`
 
+### Automatic Code Review
+
+Every PR is automatically reviewed by Claude when opened or updated. This is **advisory only** — it won't block merging.
+
+**What Claude checks (based on file types):**
+
+| File Type | Review Focus |
+|-----------|--------------|
+| `.tsx/.jsx` | Hooks usage, accessibility, shared components, TypeScript types, re-renders |
+| `.ts/.js` | Error handling, type safety, async/await, null checks |
+| `.css/.scss` | Theme tokens, responsive issues, naming conventions |
+| `.json/.yml` | Exposed secrets, valid syntax, breaking changes |
+| `.md` | Accuracy, broken links, code examples |
+
+**Review output format:**
+- Summary (one sentence)
+- File-by-file feedback
+- Verdict: ✅ Looks good, ⚠️ Minor suggestions, or 🔍 Needs discussion
+
+This runs automatically — no action needed. The review appears as a comment on the PR.
+
 ### @claude PR Reviews
 
 Humans can request changes directly in PR comments using `@claude`:
