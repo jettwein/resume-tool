@@ -133,6 +133,81 @@ The repo sends notifications to Slack for key events. Add this secret:
 
 ---
 
+## Vercel Preview Deployments
+
+Every PR automatically gets a preview deployment URL, allowing reviewers to see changes live before merging.
+
+### Setup (per project)
+
+1. **Connect repo to Vercel:**
+   - Go to [vercel.com](https://vercel.com) → **Add New Project**
+   - Select the cloned repo
+   - Vercel auto-detects Vite — click **Deploy**
+
+2. **Add environment variable for private dependencies:**
+   - Go to **Settings** → **Environment Variables**
+   - Add `GITHUB_TOKEN` with a GitHub Personal Access Token that has read access to `rippl-shared-components`
+   - Select all environments (Production, Preview, Development)
+
+3. **Create the GitHub token:**
+   - Go to [github.com/settings/tokens](https://github.com/settings/tokens)
+   - Generate new token → **Fine-grained token**
+   - Repository access: Select `rippl-shared-components`
+   - Permissions: **Contents** → Read-only
+
+### How It Works
+
+- Push to any branch → Vercel builds a preview
+- Open a PR → Vercel comments with the preview URL
+- Merge to main → Vercel deploys to production
+
+The `vercel.json` and `scripts/vercel-install.sh` files configure git to use the `GITHUB_TOKEN` for private repo access during builds.
+
+---
+
+## New Project Setup Checklist
+
+When cloning this template for a new project, here's what you need to configure:
+
+### Inherited from Template (no setup needed)
+- [x] GitHub Actions workflows (`.github/workflows/`)
+- [x] Claude custom commands (`.claude/commands/`)
+- [x] Vercel build configuration (`vercel.json`, `scripts/vercel-install.sh`)
+- [x] Project structure and placeholder app
+
+### Per-Project Setup Required
+
+| Item | Where | Secrets/Config Needed |
+|------|-------|----------------------|
+| **GitHub Actions** | Repo → Settings → Secrets | `ANTHROPIC_API_KEY`, `JIRA_API_TOKEN`, `JIRA_EMAIL`, `JIRA_SERVER`, `SLACK_WEBHOOK_URL` |
+| **Vercel** | vercel.com | Connect repo, add `GITHUB_TOKEN` env var |
+| **Claude GitHub App** | github.com/apps/claude | Install on the new repo |
+| **Jira CLI (local)** | Developer machine | Already configured if using existing setup |
+
+### Quick Setup Commands
+
+```bash
+# 1. Clone the template
+git clone https://github.com/ripplcare/agentic-coding-poc.git my-new-project
+cd my-new-project
+
+# 2. Update remote to new repo
+git remote set-url origin https://github.com/ripplcare/my-new-project.git
+git push -u origin main
+
+# 3. Add GitHub secrets (via GitHub UI or CLI)
+gh secret set ANTHROPIC_API_KEY
+gh secret set JIRA_API_TOKEN
+gh secret set JIRA_EMAIL
+gh secret set JIRA_SERVER
+gh secret set SLACK_WEBHOOK_URL
+
+# 4. Connect to Vercel (via vercel.com UI)
+# 5. Install Claude GitHub App on the new repo
+```
+
+---
+
 ## Custom Commands
 
 | Command | Description |
