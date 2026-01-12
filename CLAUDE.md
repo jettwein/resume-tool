@@ -55,37 +55,13 @@ cd ../project-feature-b && claude
 
 This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira integration.
 
-### One-Time Setup (per developer)
+### Developer Setup
 
-1. **Install jira-cli**:
-   ```bash
-   brew install ankitpokhrel/jira-cli/jira-cli
-   ```
+Each developer needs jira-cli configured locally. See [docs/ONBOARDING.md](./docs/ONBOARDING.md) for setup instructions.
 
-2. **Create an API token**:
-   - Go to https://id.atlassian.com/manage-profile/security/api-tokens
-   - Click "Create API token"
-   - Name it (e.g., "jira-cli")
-   - Copy the token
-
-3. **Add token to your shell** (add to `~/.zshrc` or `~/.bashrc`):
-   ```bash
-   export JIRA_API_TOKEN="your-api-token-here"
-   ```
-
-4. **Configure jira-cli**:
-   ```bash
-   source ~/.zshrc  # reload shell config
-   jira init --installation cloud --server https://yourcompany.atlassian.net --login your-email@company.com
-   ```
-
-5. **Verify connection**:
-   ```bash
-   jira project list
-   ```
-
-### Notes
-- API tokens work even if your org uses SSO/OAuth for web login
+### How It Works
+- **Local development**: Uses your personal Jira API token (configured via jira-cli)
+- **GitHub Actions**: Uses org-level service account (pre-configured)
 - Each developer maintains their own `~/.config/.jira/.config.yml` locally
 - No credentials are stored in the repo
 
@@ -93,33 +69,22 @@ This repo uses [jira-cli](https://github.com/ankitpokhrel/jira-cli) for Jira int
 
 ## GitHub Actions Setup
 
-The `@claude` PR review feature requires GitHub repository secrets. Set these in **Settings → Secrets and variables → Actions**:
+GitHub Actions are pre-configured at the organization level. All required secrets are set as org-level secrets:
+- `ANTHROPIC_API_KEY` — Claude API key
+- `JIRA_API_TOKEN`, `JIRA_EMAIL`, `JIRA_SERVER` — Jira service account
+- `SLACK_WEBHOOK_URL` — Slack notifications
 
-| Secret | Description | How to get it |
-|--------|-------------|---------------|
-| `ANTHROPIC_API_KEY` | Claude API key | [console.anthropic.com](https://console.anthropic.com/) |
-| `JIRA_API_TOKEN` | Jira API token | [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens) |
-| `JIRA_EMAIL` | Your Jira login email | Your Atlassian account email |
-| `JIRA_SERVER` | Jira server URL | e.g., `https://yourcompany.atlassian.net` |
+The Claude GitHub App is also installed org-wide.
 
-Once configured, the GitHub Action at `.github/workflows/claude.yml` will automatically respond to `@claude` mentions in PR comments.
+**No per-repo configuration needed.** The workflows in `.github/workflows/` will work automatically.
+
+For admin details, see [docs/ADMIN_SETUP.md](./docs/ADMIN_SETUP.md).
 
 ---
 
 ## Slack Notifications
 
-The repo sends notifications to Slack for key events. Add this secret:
-
-| Secret | Description |
-|--------|-------------|
-| `SLACK_WEBHOOK_URL` | Slack incoming webhook URL |
-
-**To get a webhook URL:**
-1. Go to [api.slack.com/apps](https://api.slack.com/apps)
-2. Create a new app → **From scratch**
-3. Go to **Incoming Webhooks** → Toggle **On**
-4. Click **Add New Webhook to Workspace**
-5. Select your channel and copy the URL
+Slack notifications are pre-configured at the organization level. All repos notify the shared engineering channel.
 
 **Events that trigger notifications:**
 
@@ -130,6 +95,8 @@ The repo sends notifications to Slack for key events. Add this secret:
 | Review submitted | 👀 Review submitted on #123 |
 | @claude triggered | 🤖 Claude triggered on #123 |
 | @claude finished | 🤖 Claude finished on #123 - success/failure |
+
+For webhook configuration, see [docs/ADMIN_SETUP.md](./docs/ADMIN_SETUP.md).
 
 ---
 
@@ -177,35 +144,33 @@ When cloning this template for a new project, here's what you need to configure:
 - [x] Vercel build configuration (`vercel.json`, `scripts/vercel-install.sh`)
 - [x] Project structure and placeholder app
 
+### Pre-Configured at Org Level (no setup needed)
+- [x] GitHub secrets (`ANTHROPIC_API_KEY`, `JIRA_*`, `SLACK_WEBHOOK_URL`)
+- [x] Claude GitHub App (installed org-wide)
+
 ### Per-Project Setup Required
 
-| Item | Where | Secrets/Config Needed | Required? |
-|------|-------|----------------------|-----------|
-| **GitHub Actions** | Repo → Settings → Secrets | `ANTHROPIC_API_KEY`, `JIRA_API_TOKEN`, `JIRA_EMAIL`, `JIRA_SERVER`, `SLACK_WEBHOOK_URL` | Yes |
-| **Claude GitHub App** | github.com/apps/claude | Install on the new repo | Yes |
-| **Jira CLI (local)** | Developer machine | Already configured if using existing setup | Yes |
+| Item | Where | What's Needed | Required? |
+|------|-------|---------------|-----------|
+| **Developer environment** | Local machine | jira-cli, gh CLI — see [docs/ONBOARDING.md](./docs/ONBOARDING.md) | Yes |
+| **CLAUDE.md customization** | This repo | Project-specific conventions | Yes |
+| **Jira project key** | CLAUDE.md | Your project's Jira key (e.g., `PROJ`) | If using Jira |
 | **Vercel** | vercel.com | Connect repo, add `GITHUB_TOKEN` env var | Optional |
 
 ### Quick Setup Commands
 
 ```bash
 # 1. Clone the template
-git clone https://github.com/ripplcare/agentic-coding-poc.git my-new-project
+git clone https://github.com/ripplcare/agentic-coding-framework.git my-new-project
 cd my-new-project
 
 # 2. Update remote to new repo
 git remote set-url origin https://github.com/ripplcare/my-new-project.git
 git push -u origin main
 
-# 3. Add GitHub secrets (via GitHub UI or CLI)
-gh secret set ANTHROPIC_API_KEY
-gh secret set JIRA_API_TOKEN
-gh secret set JIRA_EMAIL
-gh secret set JIRA_SERVER
-gh secret set SLACK_WEBHOOK_URL
+# 3. Customize CLAUDE.md with your project details
 
-# 4. Connect to Vercel (via vercel.com UI)
-# 5. Install Claude GitHub App on the new repo
+# 4. (Optional) Connect to Vercel via vercel.com UI
 ```
 
 ---
@@ -249,10 +214,11 @@ For existing repositories that weren't created from this template, use the `/ado
 
 ### After Adopting
 
-1. **Add GitHub secrets** — see [GitHub Actions Setup](#github-actions-setup)
-2. **Install Claude GitHub App** — [github.com/apps/claude](https://github.com/apps/claude)
-3. **Customize CLAUDE.md** — add project-specific details, tech stack, conventions
-4. **Commit and push** the new files
+1. **Verify environment** — ensure jira-cli and gh CLI are configured (see [docs/ONBOARDING.md](./docs/ONBOARDING.md))
+2. **Customize CLAUDE.md** — add project-specific details, tech stack, conventions
+3. **Commit and push** the new files
+
+> **Note:** GitHub secrets and the Claude GitHub App are pre-configured at the org level — no per-repo setup needed.
 
 ---
 

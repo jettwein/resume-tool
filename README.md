@@ -52,32 +52,7 @@ Connect to Jira to manage tickets directly from Claude Code.
 - `/init-project PROJ` — Generate stories from requirements, create Jira tickets
 - `/implement-all PROJ` — Auto-implement all stories in dependency order
 
-**Setup:**
-
-1. Install jira-cli:
-   ```bash
-   brew install ankitpokhrel/jira-cli/jira-cli
-   ```
-
-2. Create API token at [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
-
-3. Add to your shell (`~/.zshrc` or `~/.bashrc`):
-   ```bash
-   export JIRA_API_TOKEN="your-token-here"
-   ```
-
-4. Configure jira-cli:
-   ```bash
-   source ~/.zshrc
-   jira init --installation cloud --server https://yourcompany.atlassian.net --login your-email@company.com
-   ```
-
-5. Verify:
-   ```bash
-   jira project list
-   ```
-
-**Required info:** Jira project key (e.g., `PROJ`, `ACME`)
+**Setup:** See [docs/ONBOARDING.md](./docs/ONBOARDING.md) for jira-cli installation and configuration.
 
 ---
 
@@ -89,22 +64,9 @@ Let Claude respond to @mentions in PR comments and automatically review every PR
 - Comment `@claude fix the type errors` on any PR → Claude makes the changes
 - Automatic advisory code review on every PR opened
 
-**Setup:**
+**Setup:** Already configured at the organization level. All required secrets (`ANTHROPIC_API_KEY`, `JIRA_*`, `SLACK_WEBHOOK_URL`) and the Claude GitHub App are pre-configured for all Rippl repos.
 
-1. Add GitHub repository secrets (Settings → Secrets → Actions):
-
-   | Secret | Required For | How to Get |
-   |--------|--------------|------------|
-   | `ANTHROPIC_API_KEY` | All GitHub Actions | [console.anthropic.com](https://console.anthropic.com/) |
-   | `JIRA_API_TOKEN` | @claude with Jira commands | Same as Jira setup above |
-   | `JIRA_EMAIL` | @claude with Jira commands | Your Atlassian email |
-   | `JIRA_SERVER` | @claude with Jira commands | e.g., `https://yourcompany.atlassian.net` |
-
-2. Install the Claude GitHub App on your repo:
-   - Go to [github.com/apps/claude](https://github.com/apps/claude)
-   - Click Install → Select your repository
-
-**Required info:** GitHub repo with admin access
+See [docs/ADMIN_SETUP.md](./docs/ADMIN_SETUP.md) for details on org-level configuration.
 
 ---
 
@@ -118,14 +80,9 @@ Get notified when PRs are created, merged, reviewed, or when Claude is triggered
 - 👀 Review submitted notifications
 - 🤖 Claude triggered/finished notifications
 
-**Setup:**
+**Setup:** Already configured at the organization level. All repos notify the shared engineering channel.
 
-1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
-2. Enable Incoming Webhooks → Add New Webhook to Workspace
-3. Select your channel and copy the webhook URL
-4. Add as GitHub secret: `SLACK_WEBHOOK_URL`
-
-**Required info:** Slack workspace with permission to add apps
+See [docs/ADMIN_SETUP.md](./docs/ADMIN_SETUP.md) for webhook configuration.
 
 ---
 
@@ -262,4 +219,6 @@ claude
 - [CLAUDE.md](./CLAUDE.md) — Full project instructions and conventions
 - [WORKFLOW.md](./WORKFLOW.md) — Git workflow details
 - [COMPONENTS.md](./COMPONENTS.md) — Shared UI components (if using rippl-shared-components)
+- [docs/ONBOARDING.md](./docs/ONBOARDING.md) — New developer setup guide
+- [docs/ADMIN_SETUP.md](./docs/ADMIN_SETUP.md) — Organization admin configuration
 - [docs/shared-components-packaging.md](./docs/shared-components-packaging.md) — Packaging libraries for external use
