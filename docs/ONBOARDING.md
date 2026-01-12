@@ -155,28 +155,71 @@ jira project list | head -3
 
 All three should succeed without errors.
 
+> **Tip:** If any of these fail, see the [Troubleshooting](#troubleshooting) section below.
+
+---
+
+## Step 5: Install Global Claude Commands
+
+Install the `/adopt` command globally so you can set up any repo with the agentic workflow:
+
+```bash
+# Create user-level commands directory
+mkdir -p ~/.claude/commands
+
+# Clone the framework repo (if you haven't already)
+git clone https://github.com/ripplcare/agentic-coding-framework.git ~/repos/agentic-coding-framework
+
+# Copy the adopt command to your global commands
+cp ~/repos/agentic-coding-framework/.claude/commands/adopt.md ~/.claude/commands/
+```
+
+Now `/adopt` is available in every project you work on, even repos that don't have the framework set up yet.
+
+### Verify Installation
+
+Start Claude in any repo and run:
+```
+/help
+```
+
+You should see `/adopt` listed with "(user)" next to it, indicating it's a global command.
+
 ---
 
 ## You're Ready!
 
-Your development environment is now configured. Here's how to get started with a Rippl project:
+Your development environment is now configured. Here's how to get started:
 
-### Clone a Project
+### Option A: Work on a Project That Has the Workflow
+
+If the repo already has `.claude/commands/` set up:
 
 ```bash
 git clone https://github.com/ripplcare/your-project.git
 cd your-project
-```
-
-### Start Claude Code
-
-```bash
 claude
 ```
 
+### Option B: Add the Workflow to an Existing Repo
+
+If the repo doesn't have the workflow yet, use the global `/adopt` command you installed:
+
+```bash
+cd /path/to/existing-repo
+claude
+```
+
+Then run:
+```
+/adopt
+```
+
+Claude will set up the workflow files and guide you through configuration.
+
 ### Try Some Commands
 
-Once Claude is running, try these commands:
+Once the workflow is set up, try these commands:
 
 | Command | What it does |
 |---------|--------------|
