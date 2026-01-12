@@ -266,6 +266,7 @@ For existing repositories that weren't created from this template, use the `/ado
 | `/jira-task JIRA-PROJ-ID-123` | Fetch issue and plan implementation |
 | `/new-feature <desc>` | Implement with explore-plan-code-commit workflow |
 | `/review` | Review changes before PR |
+| `/setup` | Interactive setup wizard for configuring integrations |
 | `/ui-components` | List available shared UI components |
 
 ---
