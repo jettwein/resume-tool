@@ -85,7 +85,9 @@ You should see your GitHub username and authentication status.
 
 ## Step 3: Set Up Jira CLI
 
-The Jira CLI (`jira`) allows Claude to read tickets, update statuses, and track work.
+The Jira CLI (`jira`) allows Claude to read tickets, update statuses, and track work locally.
+
+> **Note:** GitHub Actions uses a separate service account for Jira (already configured by admins). This setup is for your local development environment so you can run commands like `/jira-task` from your terminal.
 
 ### Install
 
@@ -93,7 +95,9 @@ The Jira CLI (`jira`) allows Claude to read tickets, update statuses, and track 
 brew install ankitpokhrel/jira-cli/jira-cli
 ```
 
-### Create an API Token
+### Create a Personal API Token
+
+You'll need your own API token for local Jira access. This is different from the service account used by GitHub Actions.
 
 1. Go to [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
 2. Click **Create API token**
