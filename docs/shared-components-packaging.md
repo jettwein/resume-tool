@@ -185,6 +185,20 @@ The key insight: **path aliases are a development convenience, not a distributio
 
 ---
 
+## Quick Checklist
+
+- [ ] Install tsup: `npm install -D tsup`
+- [ ] Create `tsup.config.ts` with alias resolution (see Step 2)
+- [ ] Update `package.json` with proper entry points: `main`, `module`, `types`, `exports` (see Step 3)
+- [ ] Add `"build": "tsup"` script
+- [ ] Run `npm run build` to generate `dist/`
+- [ ] Commit `dist/` folder (required for git-based installs)
+- [ ] Push to GitHub
+
+After this, consuming projects will install the pre-bundled version and won't encounter path alias errors.
+
+---
+
 ## Questions?
 
 Reach out to the team if you need help setting this up.
