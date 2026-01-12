@@ -4,23 +4,56 @@ Interactive setup for configuring your project integrations.
 
 ## Instructions
 
-You are helping the user configure their project. Guide them through each integration step by step.
+You are helping the user configure their project. This command verifies their environment is ready and helps configure project-specific settings.
 
-### Step 1: Welcome and Discovery
+### Step 1: Verify Developer Environment
 
-First, welcome the user and check the current state:
+First, check that the developer's environment is properly configured:
 
 ```bash
-echo "Checking current configuration..."
+# Check GitHub CLI
+gh auth status 2>&1 | head -3
+
+# Check Jira CLI
+jira project list 2>&1 | head -3
 ```
 
-Check what's already configured:
-- Does `CLAUDE.md` exist and have project-specific content?
-- Is this a git repository?
-- Is jira-cli installed? (`which jira`)
-- Does `.github/workflows/` have workflow files?
+**If either check fails**, tell the user:
+```
+Your development environment isn't fully configured.
+Please follow the setup guide: docs/ONBOARDING.md
 
-Report what you find, then ask:
+Once complete, run /setup again.
+```
+
+Stop here if environment checks fail.
+
+**If both checks pass**, continue to Step 2.
+
+---
+
+### Step 2: Check Current Configuration
+
+Check what's already configured in this project:
+
+```bash
+# Check for CLAUDE.md
+ls CLAUDE.md 2>/dev/null && echo "CLAUDE.md exists"
+
+# Check for workflow files
+ls .github/workflows/*.yml 2>/dev/null
+
+# Check git remote
+git remote get-url origin 2>/dev/null
+```
+
+Report what you find to the user.
+
+---
+
+### Step 3: Ask About Integrations
+
+Ask the user which integrations they want to enable for this project:
 
 **"Which integrations would you like to set up?"**
 
@@ -28,112 +61,58 @@ Present these options:
 1. **Jira** — Ticket management (`/jira-task`, `/init-project`, `/implement-all`)
 2. **GitHub Actions** — @claude PR reviews, automatic code review
 3. **Slack** — PR and Claude activity notifications
-4. **Vercel** — Preview deployments for PRs
+4. **All of the above** (Recommended)
 5. **None** — Just use basic commands (`/new-feature`, `/review`)
 
-Let the user select multiple options (e.g., "1 and 2" or "all" or "none").
+Let the user select multiple options (e.g., "1 and 2" or "all").
 
 ---
 
-### Step 2: Configure Selected Integrations
+### Step 4: Verify Org-Level Configuration
 
-For each selected integration, walk through the setup:
-
-#### If Jira selected:
-
-1. Check if jira-cli is installed:
-   ```bash
-   which jira
-   ```
-
-2. If not installed, provide instructions:
-   ```
-   Install jira-cli:
-   brew install ankitpokhrel/jira-cli/jira-cli
-   ```
-
-3. Check if already configured:
-   ```bash
-   jira project list 2>/dev/null | head -5
-   ```
-
-4. If not configured, guide them:
-   - Create API token at https://id.atlassian.com/manage-profile/security/api-tokens
-   - Add to shell: `export JIRA_API_TOKEN="your-token"`
-   - Run: `jira init --installation cloud --server https://COMPANY.atlassian.net --login EMAIL`
-
-5. Ask for their Jira project key (e.g., `PROJ`, `ACME`) and note it for later.
+Based on their selections, verify the org-level setup is in place.
 
 #### If GitHub Actions selected:
 
-1. Check if this is a GitHub repo:
-   ```bash
-   git remote get-url origin 2>/dev/null
-   ```
+Explain that Rippl uses organization-level secrets:
+```
+GitHub Actions uses org-level secrets (already configured):
+- ANTHROPIC_API_KEY
+- JIRA_API_TOKEN, JIRA_EMAIL, JIRA_SERVER
+- SLACK_WEBHOOK_URL
 
-2. Explain the required secrets:
-   ```
-   You'll need to add these secrets in GitHub (Settings → Secrets → Actions):
+No per-repo secret configuration needed.
+```
 
-   Required:
-   - ANTHROPIC_API_KEY — Get from console.anthropic.com
+Check if the Claude GitHub App is installed:
+```bash
+gh api repos/:owner/:repo/installation 2>&1 | head -5
+```
 
-   For Jira integration (if using):
-   - JIRA_API_TOKEN — Same token from Jira setup
-   - JIRA_EMAIL — Your Atlassian login email
-   - JIRA_SERVER — e.g., https://yourcompany.atlassian.net
-
-   For Slack (if using):
-   - SLACK_WEBHOOK_URL — From Slack app setup
-   ```
-
-3. Ask if they want to add secrets now via CLI:
-   ```bash
-   gh secret set ANTHROPIC_API_KEY
-   ```
-
-4. Remind them to install the Claude GitHub App:
-   ```
-   Install the Claude GitHub App on your repo:
-   https://github.com/apps/claude
-   ```
-
-#### If Slack selected:
-
-1. Explain the setup:
-   ```
-   To set up Slack notifications:
-
-   1. Go to https://api.slack.com/apps
-   2. Create New App → From scratch
-   3. Go to "Incoming Webhooks" → Turn On
-   4. Click "Add New Webhook to Workspace"
-   5. Select your channel
-   6. Copy the webhook URL
-   ```
-
-2. If GitHub Actions is also selected, remind them to add `SLACK_WEBHOOK_URL` as a GitHub secret.
-
-3. If GitHub Actions is NOT selected, explain that Slack notifications require GitHub Actions to be enabled.
-
-#### If Vercel selected:
-
-1. Explain the setup:
-   ```
-   To set up Vercel preview deployments:
-
-   1. Go to vercel.com
-   2. Add New Project → Import this repository
-   3. Vercel will auto-detect the framework
-
-   If you have private npm dependencies:
-   - Go to Settings → Environment Variables
-   - Add GITHUB_TOKEN with a token that has read access to private repos
-   ```
+If not installed, tell them:
+```
+The Claude GitHub App needs to be installed on this repo.
+This should happen automatically for Rippl repos, but if it's missing,
+contact an org admin or install it at: github.com/apps/claude
+```
 
 ---
 
-### Step 3: Update CLAUDE.md
+### Step 5: Configure Project-Specific Settings
+
+#### If Jira selected:
+
+Ask for the Jira project key:
+```
+What is the Jira project key for this repo? (e.g., NAV, PROJ, ACME)
+This is the prefix for ticket numbers like NAV-123.
+```
+
+Store this for updating CLAUDE.md.
+
+---
+
+### Step 6: Update CLAUDE.md
 
 Ask the user if they want to customize `CLAUDE.md` with project-specific details:
 
@@ -146,52 +125,62 @@ If they say yes, help them update the relevant sections of CLAUDE.md.
 
 ---
 
-### Step 4: Summary
+### Step 7: Verify Workflow Files
 
-Provide a summary of what was configured:
+Check if the necessary workflow files exist based on their selections:
+
+```bash
+ls .github/workflows/claude.yml 2>/dev/null
+ls .github/workflows/auto-review.yml 2>/dev/null
+ls .github/workflows/slack-notifications.yml 2>/dev/null
+```
+
+If any selected integrations are missing their workflow files, offer to create them or point them to `/adopt` to set up the full workflow.
+
+---
+
+### Step 8: Summary
+
+Provide a summary of the project configuration:
 
 ```
 ## Setup Complete!
 
-### Configured:
-✅ Jira integration (project: PROJ)
-✅ GitHub Actions (@claude reviews, auto-review)
-✅ Slack notifications
-⏭️ Vercel (skipped)
+### Environment:
+✅ GitHub CLI authenticated
+✅ Jira CLI configured
 
-### Next steps:
-1. Add GitHub secrets: ANTHROPIC_API_KEY, JIRA_API_TOKEN, JIRA_EMAIL, JIRA_SERVER, SLACK_WEBHOOK_URL
-2. Install Claude GitHub App: https://github.com/apps/claude
-3. Customize CLAUDE.md with your project details
+### Project Integrations:
+✅ Jira (project: PROJ)
+✅ GitHub Actions (org secrets configured)
+✅ Slack notifications
 
 ### Commands available:
 - /new-feature <desc> — Build a new feature
 - /review — Review your changes
 - /jira-task PROJ-123 — Implement a Jira ticket
 - /init-project PROJ — Generate stories from requirements
+- /implement-all PROJ — Auto-implement all stories
 ```
 
 ---
 
-### Step 5: Offer to Disable Unused Workflows
+### Step 9: Offer to Disable Unused Workflows
 
-If the user didn't select certain integrations, offer to remove or disable the corresponding workflow files:
+If the user didn't select certain integrations, offer to remove the corresponding workflow files:
 
-- No GitHub Actions? → Offer to delete `.github/workflows/`
 - No Slack? → Offer to delete `.github/workflows/slack-notifications.yml`
 - No auto-review? → Offer to delete `.github/workflows/auto-review.yml`
+- No @claude reviews? → Offer to delete `.github/workflows/claude.yml`
 
-Ask before deleting anything:
-```
-You didn't select Slack. Would you like me to remove the slack-notifications.yml workflow file? (y/n)
-```
+Ask before deleting anything.
 
 ---
 
 ## Important Notes
 
 - Be conversational and helpful
-- Explain why each step matters
-- If something fails, help troubleshoot
-- Don't assume — ask the user if you're unsure
-- At the end, make sure they know what commands are available to them
+- Don't walk through environment setup — point to docs/ONBOARDING.md instead
+- Org-level secrets mean no per-repo secret configuration
+- Focus on project-specific configuration (Jira project key, CLAUDE.md customization)
+- If something fails, help troubleshoot or point to the right resource

@@ -4,11 +4,35 @@ Adopt the agentic coding workflow in an existing repository.
 
 ## Instructions
 
-You are helping the user adopt the agentic coding workflow in their existing repository. Be interactive and only set up what they need.
+You are helping the user adopt the agentic coding workflow in their existing repository. This creates the necessary files and configuration.
 
-### Step 1: Verify Repository
+### Step 1: Verify Environment
 
-First, confirm this is a git repository and show the user what repo they're in:
+First, check that the developer's environment is configured:
+
+```bash
+# Check GitHub CLI
+gh auth status 2>&1 | head -3
+
+# Check Jira CLI
+jira project list 2>&1 | head -3
+```
+
+**If either check fails**, tell the user:
+```
+Your development environment isn't fully configured.
+Please follow the setup guide: docs/ONBOARDING.md
+
+Once complete, run /adopt again.
+```
+
+Stop here if environment checks fail.
+
+---
+
+### Step 2: Verify Repository
+
+Confirm this is the correct repository:
 
 ```bash
 git remote get-url origin
@@ -16,7 +40,9 @@ git remote get-url origin
 
 Ask the user to confirm this is the correct repo before proceeding.
 
-### Step 2: Ask About Integrations
+---
+
+### Step 3: Ask About Integrations
 
 Ask the user which integrations they want to set up:
 
@@ -26,13 +52,13 @@ Ask the user which integrations they want to set up:
 2. **Jira** — Ticket management (`/jira-task`, status updates)
 3. **GitHub Actions** — @claude PR reviews, automatic code review
 4. **Slack** — PR and Claude activity notifications
-5. **All of the above**
+5. **All of the above** (Recommended)
 
 Let them select multiple (e.g., "2 and 3" or "all").
 
 ---
 
-### Step 3: Gather Required Information
+### Step 4: Gather Project Information
 
 Based on their selections, gather the necessary information:
 
@@ -42,33 +68,9 @@ Ask: **"What is your Jira project key?"** (e.g., `NAV`, `PROJ`, `ACME`)
 
 This is the prefix for ticket numbers like NAV-123.
 
-Also check if jira-cli is installed locally:
-```bash
-which jira
-```
-
-If not installed, tell them:
-```
-To use Jira commands locally, you'll need jira-cli:
-brew install ankitpokhrel/jira-cli/jira-cli
-
-Then configure it:
-export JIRA_API_TOKEN="your-token"  # Add to ~/.zshrc
-jira init --installation cloud --server https://COMPANY.atlassian.net --login EMAIL
-```
-
-#### If GitHub Actions selected:
-
-Note that they'll need to add secrets. Ask if they want to do it now via CLI:
-```bash
-gh secret set ANTHROPIC_API_KEY
-```
-
-Or they can do it manually in GitHub Settings → Secrets → Actions.
-
 ---
 
-### Step 4: Create Files Based on Selections
+### Step 5: Create Files Based on Selections
 
 Create the directory structure:
 ```bash
@@ -260,6 +262,35 @@ jobs:
         env:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
+      - name: Notify Slack - Claude Finished
+        if: always()
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🤖 *Claude finished* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}> - ${{ job.status }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "in `${{ github.repository }}`"
+                    }
+                  ]
+                }
+              ]
+            }
+```
+
 **.github/workflows/auto-review.yml** - Automatic code review:
 ```yaml
 name: Auto Code Review
@@ -449,47 +480,16 @@ jobs:
             }
 ```
 
-And add the Slack notification step to claude.yml after the Run Claude Code Action step:
-```yaml
-      - name: Notify Slack - Claude Finished
-        if: always()
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "🤖 *Claude finished* on <${{ github.event.issue.html_url }}|#${{ github.event.issue.number }}> - ${{ job.status }}"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "in `${{ github.repository }}`"
-                    }
-                  ]
-                }
-              ]
-            }
-```
-
 ---
 
-### Step 5: Create CLAUDE.md
+### Step 6: Create CLAUDE.md
 
 Check if CLAUDE.md already exists:
 ```bash
 ls CLAUDE.md 2>/dev/null
 ```
 
-If it exists, ask if they want to keep it or replace it. If replacing or creating new, use this template:
+If it exists, ask if they want to keep it or replace it. If replacing or creating new, create a starter template:
 
 ```markdown
 # CLAUDE.md
@@ -528,7 +528,7 @@ And add a Jira section:
 ```markdown
 ## Jira Integration
 
-Project key: **PROJ** (replace with actual key)
+Project key: **PROJ** (replace with actual key from Step 4)
 
 - Use `/jira-task PROJ-123` to work on tickets
 - Tickets are moved to "In Progress" when work starts
@@ -537,48 +537,36 @@ Project key: **PROJ** (replace with actual key)
 
 ---
 
-### Step 6: Summary
+### Step 7: Summary
 
 Display a summary based on what was configured:
 
 ```
-## ✅ Agentic coding workflow adopted!
+## Agentic coding workflow adopted!
 
 ### Files created:
-- `.claude/commands/new-feature.md`
-- `.claude/commands/review.md`
-- `.claude/settings.json`
-[If Jira] - `.claude/commands/jira-task.md`
-[If GitHub Actions] - `.github/workflows/claude.yml`
-[If GitHub Actions] - `.github/workflows/auto-review.yml`
-[If Slack] - `.github/workflows/slack-notifications.yml`
-- `CLAUDE.md`
+- .claude/commands/new-feature.md
+- .claude/commands/review.md
+- .claude/settings.json
+- CLAUDE.md
+[If Jira] - .claude/commands/jira-task.md
+[If GitHub Actions] - .github/workflows/claude.yml
+[If GitHub Actions] - .github/workflows/auto-review.yml
+[If Slack] - .github/workflows/slack-notifications.yml
 
-### Required secrets (add in GitHub Settings → Secrets → Actions):
-[If GitHub Actions]
-- `ANTHROPIC_API_KEY` — console.anthropic.com
-
-[If GitHub Actions + Jira]
-- `JIRA_API_TOKEN` — id.atlassian.com/manage-profile/security/api-tokens
-- `JIRA_EMAIL` — Your Atlassian login email
-- `JIRA_SERVER` — e.g., https://yourcompany.atlassian.net
-
-[If Slack]
-- `SLACK_WEBHOOK_URL` — api.slack.com/apps
-
-### Additional setup:
-[If GitHub Actions]
-- Install Claude GitHub App: github.com/apps/claude
+### Org-level configuration (already set up):
+- GitHub secrets: ANTHROPIC_API_KEY, JIRA_*, SLACK_WEBHOOK_URL
+- Claude GitHub App: Installed org-wide
 
 ### Commands now available:
-- `/new-feature <desc>` — Build a new feature
-- `/review` — Review your changes
-[If Jira] - `/jira-task PROJ-123` — Work on a Jira ticket
+- /new-feature <desc> — Build a new feature
+- /review — Review your changes
+[If Jira] - /jira-task PROJ-123 — Work on a Jira ticket
 ```
 
 ---
 
-### Step 7: Commit
+### Step 8: Commit
 
 Ask the user if they want you to commit and push the changes:
 
@@ -595,5 +583,6 @@ git push
 - Only create files for the integrations the user selected
 - If they don't want Slack, don't create slack-notifications.yml
 - If they don't want GitHub Actions at all, don't create .github/workflows/
-- Be helpful about explaining what each integration does
+- Don't walk through environment setup — point to docs/ONBOARDING.md
+- Org-level secrets are already configured — no per-repo setup needed
 - Check for existing files before overwriting
