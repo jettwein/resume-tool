@@ -170,6 +170,7 @@ If you're using Jira, you can use the full requirements-to-implementation workfl
 | `/new-feature <desc>` | Nothing | Implement a feature with guided workflow |
 | `/review` | Nothing | Review changes before creating PR |
 | `/setup` | Nothing | Interactive setup wizard |
+| `/doctor` | Nothing | Diagnose setup issues and verify configuration |
 | `/jira-task PROJ-123` | Jira | Implement a Jira ticket |
 | `/init-project PROJ` | Jira | Generate stories from requirements |
 | `/implement-all PROJ` | Jira | Auto-implement all Jira stories |

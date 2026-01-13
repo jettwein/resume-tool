@@ -227,6 +227,7 @@ For existing repositories that weren't created from this template, use the `/ado
 | Command | Description |
 |---------|-------------|
 | `/adopt` | Adopt agentic workflow in an existing repository |
+| `/doctor` | Diagnose setup issues and verify configuration |
 | `/init-project JIRA-PROJ-ID [file]` | Read requirements and create Jira epics/stories |
 | `/implement-all JIRA-PROJ-ID [--wait\|--batch]` | Auto-implement all stories in dependency order |
 | `/jira-task JIRA-PROJ-ID-123` | Fetch issue and plan implementation |
