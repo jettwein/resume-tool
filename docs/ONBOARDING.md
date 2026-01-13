@@ -170,11 +170,13 @@ mkdir -p ~/.claude/commands
 # Clone the framework repo (if you haven't already)
 git clone https://github.com/ripplcare/agentic-coding-framework.git ~/repos/agentic-coding-framework
 
-# Copy the adopt command to your global commands
-cp ~/repos/agentic-coding-framework/.claude/commands/adopt.md ~/.claude/commands/
+# Symlink the adopt command to your global commands
+ln -sf ~/repos/agentic-coding-framework/.claude/commands/adopt.md ~/.claude/commands/adopt.md
 ```
 
 Now `/adopt` is available in every project you work on, even repos that don't have the framework set up yet.
+
+> **Note:** Using a symlink means the command stays up to date. Just run `git pull` in `~/repos/agentic-coding-framework` to get the latest version.
 
 ### Verify Installation
 
