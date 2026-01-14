@@ -26,6 +26,9 @@ jobs:
           fetch-depth: 0
 
       - name: Install jira-cli
+        env:
+          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          JIRA_SERVER: ${{ secrets.JIRA_SERVER }}
         run: |
           # Download and install jira-cli
           curl -sSL https://github.com/ankitpokhrel/jira-cli/releases/download/v1.5.2/jira_1.5.2_linux_x86_64.tar.gz -o jira.tar.gz
@@ -43,11 +46,11 @@ jobs:
             name: Epic
             link: Parent
           installation: cloud
-          login: ${{ secrets.JIRA_EMAIL }}
+          login: ${JIRA_EMAIL}
           project:
             key: ""
             type: ""
-          server: ${{ secrets.JIRA_SERVER }}
+          server: ${JIRA_SERVER}
           EOF
 
       - name: Run Claude Code Action
