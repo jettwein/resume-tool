@@ -58,6 +58,20 @@ Let them select multiple (e.g., "2 and 3" or "all").
 
 ---
 
+### Step 3b: Ask About UI Approach
+
+Ask the user which UI approach they want to use:
+
+**"Which UI approach would you like to use for this project?"**
+
+1. **rippl-shared-components** — Shared component library with MUI, design tokens, and pre-built components (use `COMPONENTS.md`)
+2. **frontend-design skill** — Custom UI using any framework (Tailwind, ShadCN, vanilla CSS, etc.)
+3. **None/Skip** — No UI guidance (backend-only project or custom setup)
+
+Store their choice for use in later steps.
+
+---
+
 ### Step 4: Gather Project Information
 
 Based on their selections, gather the necessary information:
@@ -198,6 +212,82 @@ Implement a Jira ticket: $ARGUMENTS
    ```
 
 7. Wait for human review before proceeding
+```
+
+#### If rippl-shared-components selected for UI:
+
+**.claude/commands/ui-components.md:**
+```markdown
+# UI Components Command
+
+Display available shared UI components from rippl-shared-components library.
+
+## Instructions
+
+Read the `COMPONENTS.md` file and present a summary of available components.
+
+## Output Format
+
+```
+## Available UI Components
+
+### Core Components
+| Component | Purpose | Key Props |
+|-----------|---------|-----------|
+| Button | Primary action button | variant, onClick, disabled |
+| Card | Content container | header, children |
+| Avatar | User image | src, alt, size |
+| UserAvatar | Avatar with details | user, size, details |
+| LoadingSpinner | Loading indicator | size |
+| StatusIcon | Status indicator | type (success/warning/error/info) |
+| LabelValuePair | Label above value | label, value |
+| HtmlContent | Sanitized HTML render | html, contentEditable |
+
+### Accordion Components
+| Component | Purpose |
+|-----------|---------|
+| Accordion | Single expandable panel |
+| AccordionGroup | Multiple panels (single expand) |
+| AccordionHeader* | Pre-styled header variants |
+
+### Layout Components
+| Component | Purpose |
+|-----------|---------|
+| NavBar | App navigation bar |
+| NavLink | Navigation icon button |
+
+### Utility Components
+| Component | Purpose |
+|-----------|---------|
+| CenteredContentContainer | Flexbox centering |
+| ScrollableContainer | Scrollable area |
+| ClickToCopy | Copy to clipboard wrapper |
+
+### Ripply AI Components
+| Component | Purpose |
+|-----------|---------|
+| RipplySideBar | Chat interface container |
+| RipplyChatMessage | Chat message bubble |
+| RipplyAvatar | AI assistant avatar |
+| RipplySuggestionAction | Suggestion button |
+
+---
+
+**Import example:**
+\`\`\`tsx
+import { Button, Card, Avatar } from 'rippl-shared-components'
+import { lightTheme } from 'rippl-shared-components'
+\`\`\`
+
+**Full documentation:** See `COMPONENTS.md` for detailed props and usage examples.
+
+**View in Storybook:** `cd ~/rippl/rippl-shared-components && npm run storybook`
+```
+
+After presenting this summary, remind the user:
+- Always use shared components before creating custom ones
+- Check COMPONENTS.md for detailed props and examples
+- Follow MUI `sx` prop patterns for styling
 ```
 
 #### If GitHub Actions selected, create:
@@ -538,6 +628,76 @@ Project key: **PROJ** (replace with actual key from Step 4)
 - Tickets are moved to "Done" after PR is merged
 ```
 
+#### If rippl-shared-components selected for UI:
+
+Add this section and include `/ui-components` in the commands table:
+
+```markdown
+## UI Development
+
+This project uses the **rippl-shared-components** library for consistent UI.
+
+### Golden Rule
+**ALWAYS check `COMPONENTS.md` before creating any UI component.** Use existing shared components first.
+
+### Tech Stack
+- **React 19** + **TypeScript**
+- **Material-UI (MUI) 6** for component foundation
+- **Emotion** for CSS-in-JS styling (via MUI's `sx` prop)
+- **Montserrat** font family
+
+### Component Usage
+\`\`\`tsx
+import { Button, Card, Avatar } from 'rippl-shared-components'
+import { lightTheme, darkTheme } from 'rippl-shared-components'
+\`\`\`
+
+### Before Building UI
+1. Run `/ui-components` to see available components
+2. Check `COMPONENTS.md` for props and usage examples
+3. Use the `sx` prop for component-specific styling
+
+### Design Tokens
+| Token | Value | Usage |
+|-------|-------|-------|
+| Primary | `#312F7A` | Main brand color |
+| Secondary | `#F73C36` | Accent/alert |
+| Accent | `#3858E9` | Ripply AI branding |
+| Success | `#42B042` | Success states |
+| Error | `#E85621` | Error states |
+```
+
+Also add to the commands table:
+```
+| `/ui-components` | List available shared components |
+```
+
+#### If frontend-design skill selected for UI:
+
+Add this section instead:
+
+```markdown
+## UI Development
+
+This project uses the **frontend-design skill** for creating custom, distinctive UI.
+
+### How to Use
+When building UI components or pages, invoke the frontend-design skill:
+- Use `/frontend-design` or ask Claude to "use the frontend-design skill"
+- The skill creates production-grade, polished interfaces
+- Works with any CSS framework (Tailwind, vanilla CSS, etc.)
+
+### Guidelines
+- Describe the desired look and feel when requesting UI work
+- Specify framework preferences if any (e.g., "use Tailwind")
+- Focus on user experience and accessibility
+- The skill avoids generic AI aesthetics and creates distinctive designs
+```
+
+#### If None/Skip selected for UI:
+
+Do not add any UI Development section to CLAUDE.md.
+
 ---
 
 ### Step 7: Summary
@@ -553,9 +713,15 @@ Display a summary based on what was configured:
 - .claude/settings.json
 - CLAUDE.md
 [If Jira] - .claude/commands/jira-task.md
+[If rippl-shared-components] - .claude/commands/ui-components.md
 [If GitHub Actions] - .github/workflows/claude.yml
 [If GitHub Actions] - .github/workflows/auto-review.yml
 [If Slack] - .github/workflows/slack-notifications.yml
+
+### UI Approach:
+[If rippl-shared-components] - Using shared component library (see COMPONENTS.md)
+[If frontend-design skill] - Using frontend-design skill for custom UI
+[If None] - No UI configuration
 
 ### Org-level configuration (already set up):
 - GitHub secrets: ANTHROPIC_API_KEY, JIRA_*, SLACK_WEBHOOK_URL
@@ -565,6 +731,7 @@ Display a summary based on what was configured:
 - /new-feature <desc> — Build a new feature
 - /review — Review your changes
 [If Jira] - /jira-task PROJ-123 — Work on a Jira ticket
+[If rippl-shared-components] - /ui-components — List available shared components
 ```
 
 ---

@@ -2,9 +2,13 @@
 
 Display available shared UI components from rippl-shared-components library.
 
+> **Note:** This command is only relevant when your project uses the **rippl-shared-components** library (Option A in CLAUDE.md). If your project uses the **frontend-design skill** for custom UI, this command is not applicable—use `/frontend-design` instead.
+
 ## Instructions
 
-Read the `COMPONENTS.md` file and present a summary of available components.
+First, check if the project is configured to use rippl-shared-components by looking at CLAUDE.md. If the project uses the frontend-design skill instead, inform the user that this command isn't applicable and suggest using `/frontend-design` for custom UI work.
+
+If rippl-shared-components is configured, read the `COMPONENTS.md` file and present a summary of available components.
 
 ## Output Format
 

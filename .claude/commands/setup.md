@@ -112,6 +112,20 @@ Store this for updating CLAUDE.md.
 
 ---
 
+### Step 5b: Ask About UI Approach
+
+Ask the user which UI approach they want to use:
+
+**"Which UI approach would you like to use for this project?"**
+
+1. **rippl-shared-components** — Shared component library with MUI, design tokens, and pre-built components (use `COMPONENTS.md`)
+2. **frontend-design skill** — Custom UI using any framework (Tailwind, ShadCN, vanilla CSS, etc.)
+3. **None/Skip** — No UI guidance (backend-only project or custom setup)
+
+Store their choice for updating CLAUDE.md.
+
+---
+
 ### Step 6: Update CLAUDE.md
 
 Ask the user if they want to customize `CLAUDE.md` with project-specific details:
@@ -120,8 +134,35 @@ Ask the user if they want to customize `CLAUDE.md` with project-specific details
 2. **Tech stack** (e.g., React, Node.js, Python)
 3. **Key conventions** (naming, file structure, patterns)
 4. **Jira project key** (if using Jira)
+5. **UI Development section** (based on Step 5b selection)
 
 If they say yes, help them update the relevant sections of CLAUDE.md.
+
+#### UI Section Content (based on Step 5b):
+
+**If rippl-shared-components selected:**
+Add the UI Development section with design tokens, component usage, and reference to `COMPONENTS.md`. Also ensure the `/ui-components` command exists.
+
+**If frontend-design skill selected:**
+Add a UI Development section that references the frontend-design skill:
+```markdown
+## UI Development
+
+This project uses the **frontend-design skill** for creating custom, distinctive UI.
+
+### How to Use
+- Use `/frontend-design` or ask Claude to "use the frontend-design skill"
+- Works with any CSS framework (Tailwind, vanilla CSS, etc.)
+- Creates production-grade, polished interfaces
+
+### Guidelines
+- Describe the desired look and feel when requesting UI work
+- Specify framework preferences if any
+- Focus on user experience and accessibility
+```
+
+**If None/Skip selected:**
+Do not add any UI Development section.
 
 ---
 
@@ -155,12 +196,20 @@ Provide a summary of the project configuration:
 ✅ GitHub Actions (org secrets configured)
 ✅ Slack notifications
 
+### UI Approach:
+[One of the following based on Step 5b selection]
+✅ rippl-shared-components (see COMPONENTS.md, /ui-components command)
+✅ frontend-design skill (custom UI with any framework)
+⏭️ No UI configuration (backend-only or custom setup)
+
 ### Commands available:
 - /new-feature <desc> — Build a new feature
 - /review — Review your changes
 - /jira-task PROJ-123 — Implement a Jira ticket
 - /init-project PROJ — Generate stories from requirements
 - /implement-all PROJ — Auto-implement all stories
+[If rippl-shared-components] - /ui-components — List available shared components
+[If frontend-design skill] - /frontend-design — Create custom UI components
 ```
 
 ---

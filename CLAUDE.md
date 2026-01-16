@@ -240,35 +240,42 @@ For existing repositories that weren't created from this template, use the `/ado
 
 ## UI Development
 
-This project uses the **rippl-shared-components** library for consistent UI across applications.
+> **Note:** This section is configured during `/adopt` or `/setup`. Choose one of the two approaches below based on your project needs.
 
-### Golden Rule
+### Option A: rippl-shared-components (Shared Library)
+
+Use this approach for projects that use the rippl-shared-components library for consistent UI across applications.
+
+<details>
+<summary>Click to expand rippl-shared-components configuration</summary>
+
+#### Golden Rule
 **ALWAYS check `COMPONENTS.md` before creating any UI component.** Use existing shared components first. Only create custom components if nothing suitable exists in the library.
 
-### Tech Stack
+#### Tech Stack
 - **React 19** + **TypeScript**
 - **Material-UI (MUI) 6** for component foundation
 - **Emotion** for CSS-in-JS styling (via MUI's `sx` prop)
 - **Montserrat** font family
 
-### Component Usage
+#### Component Usage
 ```tsx
 // Import from the shared library
 import { Button, Card, Avatar, LoadingSpinner } from 'rippl-shared-components'
 import { lightTheme, darkTheme } from 'rippl-shared-components'
 ```
 
-### Styling Guidelines
+#### Styling Guidelines
 1. **Use the `sx` prop** for component-specific styling (MUI pattern)
 2. **Use theme tokens** for colors, spacing, and typography—don't hardcode values
 3. **Follow existing patterns** in the shared components library
 
-### Before Building UI
+#### Before Building UI
 1. Run `/ui-components` to see available components
 2. Check `COMPONENTS.md` for props and usage examples
 3. If a component doesn't exist, consider whether it should be added to the shared library
 
-### Design Tokens (Reference)
+#### Design Tokens (Reference)
 | Token | Value | Usage |
 |-------|-------|-------|
 | Primary | `#312F7A` | Main brand color |
@@ -276,6 +283,51 @@ import { lightTheme, darkTheme } from 'rippl-shared-components'
 | Accent | `#3858E9` | Ripply AI branding |
 | Success | `#42B042` | Success states |
 | Error | `#E85621` | Error states |
+
+</details>
+
+### Option B: frontend-design Skill (Custom UI)
+
+Use this approach for projects that need custom, distinctive UI without a shared component library. Works with any CSS framework.
+
+<details>
+<summary>Click to expand frontend-design skill configuration</summary>
+
+#### How to Use
+When building UI components or pages, invoke the frontend-design skill:
+- Use `/frontend-design` or ask Claude to "use the frontend-design skill"
+- The skill creates production-grade, polished interfaces
+- Works with any CSS framework (Tailwind, vanilla CSS, ShadCN, etc.)
+
+#### Guidelines
+- Describe the desired look and feel when requesting UI work
+- Specify framework preferences if any (e.g., "use Tailwind")
+- Focus on user experience and accessibility
+- The skill avoids generic AI aesthetics and creates distinctive designs
+
+#### Example Usage
+```
+"Create a dashboard page with a sidebar navigation using Tailwind CSS"
+"Build a pricing table component with a modern, clean design"
+"Design a login form with dark mode support"
+```
+
+</details>
+
+### Current Configuration
+
+<!--
+Update this section to reflect your project's UI approach.
+Delete the option you're NOT using and keep the relevant content.
+
+Example for rippl-shared-components:
+This project uses **rippl-shared-components**. See the expanded Option A above.
+
+Example for frontend-design skill:
+This project uses the **frontend-design skill** for custom UI.
+-->
+
+*Configure during `/adopt` or `/setup`*
 
 ---
 
