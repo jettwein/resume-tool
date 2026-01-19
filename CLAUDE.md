@@ -21,6 +21,36 @@ This is a starter repo for Claude Code projects with GitHub and Jira integration
 
 ---
 
+## Core Workflow Rules (CRITICAL)
+
+These rules apply to ALL work in projects using this framework:
+
+### 1. ALWAYS Create a Jira Ticket First
+Every piece of work—even ad hoc requests, small fixes, or "quick" changes—**must have a Jira ticket**. Create the ticket before starting implementation. This ensures:
+- All work is tracked and visible
+- Progress can be monitored
+- Nothing gets lost or forgotten
+
+**No exceptions.** If the user asks for something and there's no ticket, create one first.
+
+### 2. ALWAYS Use Feature Branches and PRs
+**Never commit directly to main.** Every change must:
+1. Start from a feature branch (`feature/<jira-key>-<description>`)
+2. Go through a Pull Request
+3. Be reviewed by a human before merging
+
+Even "small" fixes benefit from this workflow—it maintains clean git history and ensures human oversight.
+
+### 3. Verify All ACs Before Marking Done
+Do not move a Jira ticket to "Done" until:
+- All acceptance criteria are verified
+- The PR is merged
+- Any automated tests pass
+
+If you can't verify an AC, the ticket stays open.
+
+---
+
 ## Multi-Agent Concurrent Development
 
 When multiple features can be developed in parallel, use git worktrees to run separate Claude instances:
