@@ -4,6 +4,35 @@ Shared workflow standards for all projects. This file can be synced to projects 
 
 ---
 
+## Core Rules (CRITICAL)
+
+These rules apply to ALL work. No exceptions.
+
+### 1. ALWAYS Create a Jira Ticket First
+Every piece of work—even ad hoc requests, small fixes, or "quick" changes—**must have a Jira ticket**. Create the ticket before starting implementation.
+
+```bash
+# Create ticket first
+jira issue create -t Task -s "Brief description" -b "Details" --no-input
+
+# Then start work
+git checkout -b feature/<JIRA-KEY>-description
+```
+
+### 2. ALWAYS Use Feature Branches and PRs
+**Never commit directly to main.** Every change must:
+1. Start from a feature branch
+2. Go through a Pull Request
+3. Be reviewed by a human before merging
+
+### 3. Verify All ACs Before Marking Done
+Do not move a Jira ticket to "Done" until:
+- All acceptance criteria are verified
+- The PR is merged
+- Any automated tests pass
+
+---
+
 ## Git Workflow
 
 ### Starting New Work
