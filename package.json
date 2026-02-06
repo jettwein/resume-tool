@@ -26,6 +26,8 @@
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/file-saver": "^2.0.7",
+    "@types/gapi": "^0.0.47",
+    "@types/gapi.client.gmail": "^1.0.5",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vercel/node": "^5.5.28",
