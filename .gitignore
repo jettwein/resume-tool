@@ -47,3 +47,4 @@ npm-debug.log*
 # Project-specific files (created per-clone)
 requirements.md
 stories.md
+.vercel

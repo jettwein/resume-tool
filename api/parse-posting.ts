@@ -1,0 +1,57 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic();
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ error: 'Job posting text is required' });
+    }
+
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      messages: [
+        {
+          role: 'user',
+          content: `Extract the job posting details from this text. Return a JSON object with the following fields:
+- title: The job title (e.g., "Senior Software Engineer", "VP, Engineering")
+- company: The company name
+- salaryRange: The salary range if mentioned (e.g., "$150,000 - $180,000"), or null if not specified
+- description: A clean summary of the job description and responsibilities
+- requirements: An array of key requirements/qualifications
+
+If you cannot find a field, use an empty string, null, or empty array as appropriate.
+
+Job Posting Text:
+${text.substring(0, 50000)}
+
+Return ONLY valid JSON, no other text.`,
+        },
+      ],
+    });
+
+    const responseText = message.content[0].type === 'text' ? message.content[0].text : '';
+
+    // Parse the JSON response
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.status(500).json({ error: 'Failed to parse job posting' });
+    }
+
+    const result = JSON.parse(jsonMatch[0]);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : 'Internal server error'
+    });
+  }
+}
