@@ -4,6 +4,8 @@ import {
   ResearchResponse,
   FetchPostingResponse,
   ParsePostingResponse,
+  JobSearchFilters,
+  JobSearchResponse,
 } from '../types';
 
 const API_BASE = '/api';
@@ -111,4 +113,21 @@ export async function parseEmails(emails: EmailInput[]): Promise<ParseEmailsResp
     body: JSON.stringify({ emails }),
   });
   return handleResponse<ParseEmailsResponse>(response);
+}
+
+export async function searchJobs(filters: JobSearchFilters): Promise<JobSearchResponse> {
+  const response = await fetch(`${API_BASE}/search-jobs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      keywords: filters.keywords,
+      location: filters.location,
+      remote: filters.remote === 'remote',
+      jobType: filters.jobType === 'any' ? undefined : filters.jobType,
+      resultsWanted: filters.resultsWanted,
+      hoursOld: filters.hoursOld,
+      siteNames: filters.siteNames,
+    }),
+  });
+  return handleResponse<JobSearchResponse>(response);
 }

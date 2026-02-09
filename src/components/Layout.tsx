@@ -37,6 +37,7 @@ export function Layout({ children, currentTab, onTabChange }: LayoutProps) {
               <Tab label="My Resume" />
               <Tab label="Add Job" />
               <Tab label="Applications" />
+              <Tab label="Find Jobs" />
             </Tabs>
           </Container>
         </Box>

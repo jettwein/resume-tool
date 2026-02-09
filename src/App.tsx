@@ -3,6 +3,7 @@ import { Layout } from './components/Layout';
 import { ResumeManager } from './components/ResumeManager';
 import { JobPostingInput } from './components/JobPostingInput';
 import { ApplicationList } from './components/ApplicationList';
+import { JobSearch } from './components/JobSearch';
 import { useResume } from './hooks/useResume';
 import { useApplications } from './hooks/useApplications';
 import { useProfile } from './hooks/useProfile';
@@ -161,6 +162,9 @@ ${app.jobPosting.requirements?.map((r: string) => `- ${r}`).join('\n') || 'Not s
           onAddActivity={addActivity}
           onDeleteActivity={deleteActivity}
         />
+      )}
+      {currentTab === 3 && (
+        <JobSearch onAddJob={handleAddJob} hasResume={hasResume} userSkills={skills} />
       )}
     </Layout>
   );
