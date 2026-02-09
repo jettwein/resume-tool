@@ -32,6 +32,7 @@ export interface CompanyResearch {
 import { StructuredResume } from './resume';
 
 export * from './resume';
+export * from './jobSearch';
 
 // Application stage in the hiring process
 export type ApplicationStage =

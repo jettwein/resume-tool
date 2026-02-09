@@ -1,4 +1,9 @@
 {
   "installCommand": "bash scripts/vercel-install.sh",
-  "framework": "vite"
+  "framework": "vite",
+  "functions": {
+    "api/search-jobs.ts": {
+      "maxDuration": 30
+    }
+  }
 }
