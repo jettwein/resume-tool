@@ -52,6 +52,7 @@ import { Application, JobPosting, ExportFormat, ApplicationStage, Activity } fro
 import { ApplicationCard } from './ApplicationCard';
 import { ResearchPanel } from './ResearchPanel';
 import { ActivityTimeline } from './ActivityTimeline';
+import { GmailSync } from './GmailSync';
 import { refineResume } from '../services/api';
 import { exportResume, getAvailableFormats } from '../services/export';
 import { stageConfig, stageOrder } from '../utils/stages';
@@ -289,6 +290,14 @@ export function ApplicationList({
 
   return (
     <Box>
+      <Box sx={{ mb: 3 }}>
+        <GmailSync
+          applications={applications}
+          onAddActivity={onAddActivity}
+          onSetStage={onSetStage}
+        />
+      </Box>
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h5" sx={{ fontWeight: 600 }}>
           Applications
