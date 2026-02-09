@@ -4,6 +4,8 @@ import {
   ResearchResponse,
   FetchPostingResponse,
   ParsePostingResponse,
+  JobSearchFilters,
+  JobSearchResponse,
 } from '../types';
 
 const API_BASE = '/api';
@@ -76,4 +78,56 @@ export async function refineResume(
     body: JSON.stringify({ currentResume, originalResume, jobPosting, request }),
   });
   return handleResponse<RefineResumeResponse>(response);
+}
+
+export interface EmailInput {
+  subject: string;
+  from: string;
+  to: string;
+  date: string;
+  body: string;
+  snippet?: string;
+}
+
+export interface ParsedEmail {
+  company: string | null;
+  jobTitle: string | null;
+  emailType: 'application_received' | 'interview_request' | 'rejection' | 'offer' | 'follow_up' | 'other';
+  summary: string;
+  actionRequired: boolean;
+  actionDescription: string | null;
+  scheduledDate: string | null;
+  senderName: string | null;
+  senderRole: string | null;
+  confidence: 'high' | 'medium' | 'low';
+}
+
+export interface ParseEmailsResponse {
+  parsedEmails: ParsedEmail[];
+}
+
+export async function parseEmails(emails: EmailInput[]): Promise<ParseEmailsResponse> {
+  const response = await fetch(`${API_BASE}/parse-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ emails }),
+  });
+  return handleResponse<ParseEmailsResponse>(response);
+}
+
+export async function searchJobs(filters: JobSearchFilters): Promise<JobSearchResponse> {
+  const response = await fetch(`${API_BASE}/search-jobs`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      keywords: filters.keywords,
+      location: filters.location,
+      remote: filters.remote === 'remote',
+      jobType: filters.jobType === 'any' ? undefined : filters.jobType,
+      resultsWanted: filters.resultsWanted,
+      hoursOld: filters.hoursOld,
+      siteNames: filters.siteNames,
+    }),
+  });
+  return handleResponse<JobSearchResponse>(response);
 }

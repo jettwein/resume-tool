@@ -40,6 +40,10 @@ logs/
 *.log
 npm-debug.log*
 
+# Virtual environments
+.venv/
+venv/
+
 # Misc
 *.bak
 .cache/

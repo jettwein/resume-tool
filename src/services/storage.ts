@@ -2,6 +2,8 @@ const STORAGE_KEYS = {
   RESUME: 'resume-tool:resume',
   APPLICATIONS: 'resume-tool:applications',
   PROFILE: 'resume-tool:profile',
+  JOB_SEARCH_FILTERS: 'resume-tool:job-search-filters',
+  REJECTED_JOBS: 'resume-tool:rejected-jobs',
 } as const;
 
 export function getItem<T>(key: string): T | null {
